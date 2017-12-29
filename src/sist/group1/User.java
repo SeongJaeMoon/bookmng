@@ -1,0 +1,80 @@
+package sist.group1;
+
+import java.util.*;
+
+public class User {
+	
+	/*
+	 @Param 
+	 고유번호(ex. U001, U002...), 아이디, 비밀번호, 이름, 전화번호, 받은 메세지, 유저 고유의 대출 정보
+	 */
+	private String userNo;
+	private String userId; 
+	private String password;
+	private String name;
+	private String phone;
+	private List<String> messages = new ArrayList<String>();
+
+	
+	public User() {
+		
+	}
+	
+	public User(String userNo, String userId, String password, String name, String phone) {
+		this.userNo = userNo;
+		this.userId = userId;
+		this.password = password;
+		this.name = name;
+		this.phone = phone;
+	}
+	
+	public String getUserNo() {
+		return userNo;
+	}
+
+	public void setUserNo(String userNo) {
+		this.userNo = userNo;
+	}
+	
+	public String getUserId() {
+		return userId;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getphone() {
+		return phone;
+	}
+	
+	public List<String> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(String messages) {
+		this.messages.add(messages);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s %s %2s %2s", this.name, this.userId, this.password, this.phone);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean result = false;
+		if(obj instanceof User) {
+			User user = (User)obj;
+			if(this.userId.equals(user.getUserId())
+					&&this.userId.equals(user.getPassword())) {
+				result = true;
+			}
+		}
+		return result;
+	}
+}
