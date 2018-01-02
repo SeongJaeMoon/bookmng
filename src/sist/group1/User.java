@@ -1,9 +1,14 @@
 package sist.group1;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class User {
+public class User implements Serializable, Comparable<User> {
 	
+	/**
+	 * 직렬화 UID
+	 */
+	private static final long serialVersionUID = 1L;
 	/*
 	 @Param 
 	 고유번호(ex. U001, U002...), 아이디, 비밀번호, 이름, 전화번호, 받은 메세지, 유저 고유의 대출 정보
@@ -74,6 +79,16 @@ public class User {
 					&&this.userId.equals(user.getPassword())) {
 				result = true;
 			}
+		}
+		return result;
+	}
+
+	@Override
+	public int compareTo(User o) {
+		int result = 0;
+		if(o instanceof User) {
+			User user = (User)o;
+			result = this.userId.compareTo(user.getUserId());
 		}
 		return result;
 	}

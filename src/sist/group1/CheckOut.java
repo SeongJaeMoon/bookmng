@@ -1,7 +1,13 @@
 package sist.group1;
 
-public class CheckOut {
+import java.io.Serializable;
+
+public class CheckOut implements Serializable {
 	
+	/**
+	 * 직렬화 UID
+	 */
+	private static final long serialVersionUID = 3L;
 	/*
 	 @Param
 	  책의 등록번호, 대출자 번호, 대출일, 반납입, 반납예정일, 책 상태, 반납상태(보류), 연체일수  
@@ -45,9 +51,6 @@ public class CheckOut {
 		return userNo;
 	}
 
-
-
-
 	public String getDueDate() {
 		return dueDate;
 	}
@@ -56,8 +59,6 @@ public class CheckOut {
 	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
-
-	
 
 	public int getOverdueDays() {
 		return overdueDays;
