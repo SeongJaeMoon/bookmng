@@ -21,16 +21,15 @@ public class Library {
 			
 			if(input == 0) break;
 				switch(input) {
-				case 0: break;
-				case 1: break;
-				case 2: break;
+				case 1: service.register(sc);break;
+				case 2: service.login(sc);break;
 				default : System.out.println("알 수 업는 입력입니다. 다시 시도하세요.");break;
 				}
 			}
 			sc.close();
-			System.out.println("프로그램을 종료합니다.");
+			service.fileSave();
 		}catch(Exception e) {
-			
+			System.out.println(e.getMessage());
 		}
 	}
 	
