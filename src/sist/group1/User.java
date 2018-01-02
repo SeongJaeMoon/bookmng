@@ -67,7 +67,7 @@ public class User implements Serializable, Comparable<User> {
 
 	@Override
 	public String toString() {
-		return String.format("%s %s %2s %2s", this.name, this.userId, this.password, this.phone);
+		return String.format("%s %s %s %2s %2s", this.userNo, this.name, this.userId, this.password, this.phone);
 	}
 	
 	@Override
