@@ -43,11 +43,11 @@ public class CheckOut implements Serializable {
 		return returnDate;
 	}
 
-	public String getcBookNo() {
+	public String getBookNo() {
 		return bookNo;
 	}
 
-	public String getcUserNo() {
+	public String getUserNo() {
 		return userNo;
 	}
 

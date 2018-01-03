@@ -2,29 +2,32 @@ package sist.group1;
 
 import java.util.*;
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class LibraryDAO {
 
 	/*
 	 * 
-	 * this.users.add(new User("","","","","")); ÀüÃ¼ »ç¿ëÀÚ Á¤º¸ ÀúÀå¿ë ¸®½ºÆ®¿¡ ³Ö´Â ¹æ¹ı
-	 * this.books.add(new Book("","","","")); ÀüÃ¼ Ã¥ Á¤º¸ ÀúÀå¿ë ¸®½ºÆ®¿¡ ³Ö´Â ¹æ¹ı
-	 * this.checkOuts.add(new CheckOut("B001","U001","2017-12-27")); ´ëÃâ ÀüÃ¼ Á¤º¸ ¸®½ºÆ®¿¡
-	 * ³Ö´Â ¹æ¹ı for(CheckOut c : checkOuts) { ¸®½ºÆ®¿¡¼­ Æ¯Á¤ ¸Å°³º¯¼ö °ª¿¡ ¸Â°Ô °´Ã¼ Á¤º¸ ²¨³»¿À´Â ¹æ¹ı
+	 * this.users.add(new User("","","","","")); ì „ì²´ ì‚¬ìš©ì ì •ë³´ ì €ì¥ìš© ë¦¬ìŠ¤íŠ¸ì— ë„£ëŠ” ë°©ë²•
+	 * this.books.add(new Book("","","","")); ì „ì²´ ì±… ì •ë³´ ì €ì¥ìš© ë¦¬ìŠ¤íŠ¸ì— ë„£ëŠ” ë°©ë²•
+	 * this.checkOuts.add(new CheckOut("B001","U001","2017-12-27")); ëŒ€ì¶œ ì „ì²´ ì •ë³´ ë¦¬ìŠ¤íŠ¸ì—
+	 * ë„£ëŠ” ë°©ë²• for(CheckOut c : checkOuts) { ë¦¬ìŠ¤íŠ¸ì—ì„œ íŠ¹ì • ë§¤ê°œë³€ìˆ˜ ê°’ì— ë§ê²Œ ê°ì²´ ì •ë³´ êº¼ë‚´ì˜¤ëŠ” ë°©ë²•
 	 * if(c.getcBookNo().equals("B001")) {
 	 * 
 	 * } Set<String>key = TestClass.testBook.keySet(); Iterator it = key.iterator();
-	 * while(it.hasNext()){ ¸Ê¿¡¼­ Æ¯Á¤ ¸Å°³º¯¼ö °ª¿¡ ¸Â°Ô °´Ã¼ Á¤º¸ ²¨³»¿À´Â ¹æ¹ı String key =
+	 * while(it.hasNext()){ ë§µì—ì„œ íŠ¹ì • ë§¤ê°œë³€ìˆ˜ ê°’ì— ë§ê²Œ ê°ì²´ ì •ë³´ êº¼ë‚´ì˜¤ëŠ” ë°©ë²• String key =
 	 * (String)it.next(); Book b = TestClass.testBook.get(key); }
 	 * 
 	 * }
 	 */
 
 	/*
-	 * @Param »ç¿ëÀÚ Á¤º¸(ÇöÀç Á¢¼ÓÇÑ »ç¿ëÀÚ ¾ÆÀÌµğ, Ã¥ Á¤º¸), »ç¿ëÀÚ ÀüÃ¼ Á¤º¸, Ã¥ ÀüÃ¼ Á¤º¸, ´ëÃâ ÀüÃ¼ Á¤º¸
+	 * @Param ì‚¬ìš©ì ì •ë³´(í˜„ì¬ ì ‘ì†í•œ ì‚¬ìš©ì ì•„ì´ë””, ì±… ì •ë³´), ì‚¬ìš©ì ì „ì²´ ì •ë³´, ì±… ì „ì²´ ì •ë³´, ëŒ€ì¶œ ì „ì²´ ì •ë³´
 	 */
 
 	private Utils utils = Utils.getInstance();
+	private User currentUser = this.utils.getCurrentUser();
 	private Map<String, User> users = new HashMap<String, User>();
 	private Map<String, Book> books = new HashMap<String, Book>();
 	private List<CheckOut> checkOuts = new ArrayList<CheckOut>();
@@ -33,6 +36,10 @@ public class LibraryDAO {
 	private static final String BOOK_FILE = "D:\\books.data";
 	private static final String CHECKOUT_FILE = "D:\\checkOuts.data";
 
+	private LocalDate now = LocalDate.now();
+	private DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private String nowDate = this.now.format(dateFormat);
+	
 	@SuppressWarnings("unchecked")
 	public LibraryDAO() {
 		File file = new File(USER_FILE);
@@ -53,7 +60,7 @@ public class LibraryDAO {
 			this.checkOuts = (List<CheckOut>) obj;
 		}
 		/*
-		 * °ª Ãâ·Â Å×½ºÆ®
+		 * ê°’ ì¶œë ¥ í…ŒìŠ¤íŠ¸
 		 */
 		StringBuilder sb = new StringBuilder();
 		Set<String>keySet = this.users.keySet();
@@ -67,10 +74,10 @@ public class LibraryDAO {
 	}
 
 	/*
-	 * -È¸¿ø°¡ÀÔÀÌ ¿Ï·á µÇ¾ú½À´Ï´Ù. 
-	 * -ÀÌ¹Ì Á¸ÀçÇÏ´Â id ÀÔ´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä. 
-	 * -Àß¸øµÈ ºñ¹Ğ¹øÈ£ Çü½ÄÀÔ´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä. 
-	 * -Àß¸øµÈ ÀüÈ­¹øÈ£ Çü½ÄÀÔ´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.
+	 * -íšŒì›ê°€ì…ì´ ì™„ë£Œ ë˜ì—ˆìŠµë‹ˆë‹¤. 
+	 * -ì´ë¯¸ ì¡´ì¬í•˜ëŠ” id ì…ë‹ˆë‹¤. ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”. 
+	 * -ì˜ëª»ëœ ë¹„ë°€ë²ˆí˜¸ í˜•ì‹ì…ë‹ˆë‹¤. ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”. 
+	 * -ì˜ëª»ëœ ì „í™”ë²ˆí˜¸ í˜•ì‹ì…ë‹ˆë‹¤. ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”.
 	 */
 
 	public void register(String userId, String password, String name, String phone) {
@@ -97,37 +104,37 @@ public class LibraryDAO {
 	}
 
 	/*
-	 * @Param »ç¿ëÀÚ ¾ÆÀÌµğ, »ç¿ëÀÚ ºñ¹Ğ¹øÈ£
-	 * ¹ü¿ëÀûÀ¸·Î »ç¿ë °¡´ÉÇÑ ¸Ş¼Òµå. (ÇöÀç »ç¿ëÀÚ ¼³Á¤¿ë, »ç¿ëÀÚ Á¸Àç ¿©ºÎ)  
+	 * @Param ì‚¬ìš©ì ì•„ì´ë””, ì‚¬ìš©ì ë¹„ë°€ë²ˆí˜¸
+	 * ë²”ìš©ì ìœ¼ë¡œ ì‚¬ìš© ê°€ëŠ¥í•œ ë©”ì†Œë“œ. (í˜„ì¬ ì‚¬ìš©ì ì„¤ì •ìš©, ì‚¬ìš©ì ì¡´ì¬ ì—¬ë¶€)  
 	 */
 	public User getCurrentUser(String userId, String password) {
-		//°á°ú °ªÀ¸·Î ³Ñ±æ User Å¸ÀÔ º¯¼ö »ı¼º
+		//ê²°ê³¼ ê°’ìœ¼ë¡œ ë„˜ê¸¸ User íƒ€ì… ë³€ìˆ˜ ìƒì„±
 		User user = null;
-		//ÀüÃ¼ usersÀÇ ¹İº¹¹®À» µ¹¸®¸ç, Å½»öÇÏ±â À§ÇØ set, list »ı¼º
+		//ì „ì²´ usersì˜ ë°˜ë³µë¬¸ì„ ëŒë¦¬ë©°, íƒìƒ‰í•˜ê¸° ìœ„í•´ set, list ìƒì„±
 		Set<String>key = this.users.keySet();
 		List<String>temp = new ArrayList<String>(key);
-		//Iterator·Î ¹İº¹¹® µ¹¸®±â
+		//Iteratorë¡œ ë°˜ë³µë¬¸ ëŒë¦¬ê¸°
 		Iterator<String> it = temp.iterator();
 		while(it.hasNext()) {
 			String keyTemp = (String)it.next();
-			//User Å¸ÀÔÀÇ ÀÓ½Ã º¯¼ö ¼±¾ğ ÈÄ users ¸Ê °´Ã¼ÀÇ °ª ÇÒ´ç
+			//User íƒ€ì…ì˜ ì„ì‹œ ë³€ìˆ˜ ì„ ì–¸ í›„ users ë§µ ê°ì²´ì˜ ê°’ í• ë‹¹
 			User u = this.users.get(keyTemp);
-			//¸Å°³º¯¼ö·Î ÀÔ·Â¹ŞÀº »ç¿ëÀÚ ¾ÆÀÌµğ ¹× ºñ¹Ğ¹øÈ£°¡ ÀÏÄ¡ÇÏ´Â °ªÀÌ ÀÖ´Ù¸é
+			//ë§¤ê°œë³€ìˆ˜ë¡œ ì…ë ¥ë°›ì€ ì‚¬ìš©ì ì•„ì´ë”” ë° ë¹„ë°€ë²ˆí˜¸ê°€ ì¼ì¹˜í•˜ëŠ” ê°’ì´ ìˆë‹¤ë©´
 			if(u.getUserId().equals(userId)&&u.getPassword().equals(password)) {
-				//°á°ú °ªÀ» ¸®ÅÏÇÒ À¯Àú º¯¼ö¿¡ ÇÒ´ç
+				//ê²°ê³¼ ê°’ì„ ë¦¬í„´í•  ìœ ì € ë³€ìˆ˜ì— í• ë‹¹
 				user = u;
-				//°á°ú °ªÀ» Ã£¾ÒÀ¸¹Ç·Î, ´õ ÀÌ»ó ¹İº¹¹®À» µ¹¸± ÇÊ¿ä°¡ ¾ø´Ù. break;
+				//ê²°ê³¼ ê°’ì„ ì°¾ì•˜ìœ¼ë¯€ë¡œ, ë” ì´ìƒ ë°˜ë³µë¬¸ì„ ëŒë¦´ í•„ìš”ê°€ ì—†ë‹¤. break;
 				break;
 			}
 		}
-		//°á°ú °ª ¸®ÅÏ -> °á°ú °ªÀÌ  nullÀÌ¶ó¸é, »ç¿ëÀÚ°¡ ¾ø´Ù´Â ¶æÀÌ´Ù. °¡Á®´Ù ¾µ ¶§ ³Î Ã¼Å© ÇÊ¼ö!
+		//ê²°ê³¼ ê°’ ë¦¬í„´ -> ê²°ê³¼ ê°’ì´  nullì´ë¼ë©´, ì‚¬ìš©ìê°€ ì—†ë‹¤ëŠ” ëœ»ì´ë‹¤. ê°€ì ¸ë‹¤ ì“¸ ë•Œ ë„ ì²´í¬ í•„ìˆ˜!
 		return user;
 	}
 	
 	/*
-	 * »ç¿ëÀÚ ¾ÆÀÌµğ Á¸Àç ¿©ºÎ È®ÀÎ 
-	 * @Param »ç¿ëÀÚ ¾ÆÀÌµğ, »ç¿ëÀÚ ºñ¹Ğ¹øÈ£
-	 * ¾ÆÀÌµğ´Â Á¸ÀçÇÏÁö¸¸, ºñ¹Ğ¹øÈ£°¡ ¸ÂÁö ¾ÊÀ» °æ¿ì true¸¦ ¸®ÅÏÇÑ´Ù.
+	 * ì‚¬ìš©ì ì•„ì´ë”” ì¡´ì¬ ì—¬ë¶€ í™•ì¸ 
+	 * @Param ì‚¬ìš©ì ì•„ì´ë””, ì‚¬ìš©ì ë¹„ë°€ë²ˆí˜¸
+	 * ì•„ì´ë””ëŠ” ì¡´ì¬í•˜ì§€ë§Œ, ë¹„ë°€ë²ˆí˜¸ê°€ ë§ì§€ ì•Šì„ ê²½ìš° trueë¥¼ ë¦¬í„´í•œë‹¤.
 	 */
 	public boolean isWrongPassword(String userId, String password) {
 		boolean result = false;
@@ -145,9 +152,9 @@ public class LibraryDAO {
 		return result;
 	}
 	/*
-	 * @Param ÆÄÀÏÀÌ¸§  
-	 * ÆÄÀÏ ¿ªÁ÷·ÄÈ­
-	 * ÇÁ·Î±×·¥ ½ÇÇà½Ã users, books, checkouts ÃÊ±âÈ­¸¦ À§ÇÑ ¸Ş¼Òµå
+	 * @Param íŒŒì¼ì´ë¦„  
+	 * íŒŒì¼ ì—­ì§ë ¬í™”
+	 * í”„ë¡œê·¸ë¨ ì‹¤í–‰ì‹œ users, books, checkouts ì´ˆê¸°í™”ë¥¼ ìœ„í•œ ë©”ì†Œë“œ
 	 */
 	public Object deSerialization(String fileName) {
 		Object result = null;
@@ -170,7 +177,7 @@ public class LibraryDAO {
 		return result;
 	}
 
-	// ÇÁ·Î±×·¥ Á¾·á½Ã users, books, checkOuts µ¥ÀÌÅÍ ÀúÀå
+	// í”„ë¡œê·¸ë¨ ì¢…ë£Œì‹œ users, books, checkOuts ë°ì´í„° ì €ì¥
 	public void logout() {
 		FileOutputStream fs = null;
 		ObjectOutputStream os = null;
@@ -190,7 +197,7 @@ public class LibraryDAO {
 				os = new ObjectOutputStream(fs);
 				os.writeObject(this.checkOuts);
 			}
-			// ÄÃ·º¼Ç ÀúÀå¼Ò¿¡ ÀúÀåµÈ ¸ğµç Á¤º¸¸¦ Á÷·ÄÈ­ ½Ãµµ
+			// ì»¬ë ‰ì…˜ ì €ì¥ì†Œì— ì €ì¥ëœ ëª¨ë“  ì •ë³´ë¥¼ ì§ë ¬í™” ì‹œë„
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -202,4 +209,192 @@ public class LibraryDAO {
 			}
 		}
 	}
+	/*@Param  
+	word : Bookì˜ getter ì¢…ë¥˜ ì„ íƒí•  ë•Œ
+	key : ê°’ ë¹„êµí•  ë•Œ
+	ê²€ìƒ‰ì–´ì™€ ì¼ì¹˜í•˜ëŠ” ë„ì„œë¥¼ ì¶œë ¥í•˜ê²Œ ë§Œë“œëŠ” ë©”ì†Œë“œ
+	*/
+	public String searchForBooks(String word, String key) {
+
+		StringBuilder sb = new StringBuilder();
+		
+		//ê²€ìƒ‰ì–´ì— í•´ë‹¹í•˜ëŠ” ë„ì„œ ì•ˆë‚´ ë©”ì„¸ì§€
+		sb.append(String.format("[%s]ì— í•´ë‹¹í•˜ëŠ” ë„ì„œëª©ë¡ ì…ë‹ˆë‹¤.%n", key));
+		sb.append(String.format("--------------------------------------------%%n"));
+		sb.append(String.format("ë“±ë¡ë²ˆí˜¸   ë„ì„œëª…     ì €ì    ì¶œíŒì‚¬    ëŒ€ì¶œí˜„í™©%n"));
+		sb.append(String.format("--------------------------------------------%%n"));
+		
+			Book s = this.books.get(key);
+			if (word.equals("ë“±ë¡ë²ˆí˜¸") && s.getBookNo().contains(key)) {
+				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
+						s.getAuthor(), s.getBookStatus()));
+			} else if (word.equals("ì±…ì œëª©") && s.getBookTitle().contains(key)) {
+				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
+						s.getAuthor(), s.getBookStatus()));
+			} else if (word.equals("ì¶œíŒì‚¬") && s.getAuthor().contains(key)) {
+				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
+						s.getAuthor(), s.getBookStatus()));
+			} else if (word.equals("ì €ì") && s.getPublisher().contains(key)) {
+				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
+						s.getAuthor(), s.getBookStatus()));
+			}
+		
+		sb.append(String.format("------------------------------------------%n"));
+		return sb.toString();
+	}
+	
+	public String viewCheckedOutBooks() {
+
+		StringBuilder sb = new StringBuilder();
+		//ì„ì‹œ ì¹´ìš´íŠ¸ ë³€ìˆ˜
+		int a = 0;
+		// í¼ì„¼íŠ¸ ê³„ì‚°ìš© books ì‚¬ì´ì¦ˆ ë³€ìˆ˜
+		double d = this.books.size();
+		// ì˜¤ëŠ˜ë‚ ì§œ ì¶œë ¥
+		sb.append(String.format("ì˜¤ëŠ˜ ë‚ ì§œ : %s%n", this.nowDate));
+		sb.append(String.format("-------------------------------------------------------------------------------------------------%n"));
+		sb.append(String.format("ë“±ë¡ë²ˆí˜¸    ë„ì„œëª…        ì €ì     ì¶œíŒì‚¬       ëŒ€ì¶œì¼       ë°˜ë‚©ì˜ˆì •ì¼        ëŒ€ì¶œì¸     íšŒì›ë²ˆí˜¸%n"));
+
+			for (CheckOut c : checkOuts) {
+				Book b = this.books.get(c.getBookNo());
+				User s = this.users.get(c.getBookNo());
+
+				if (b.getBookStatus() == 1 && b.getBookStatus() == 2) {
+					++a;
+					sb.append(String.format("%-5s%-10s%-10s%-10s%-10s%-10s%-10s%-10s%n", b.getBookNo(),
+							b.getBookTitle(), b.getAuthor(), b.getPublisher(), c.getCheckOutDate(), c.getDueDate(),
+							s.getName(), c.getUserNo()));
+				}
+			}
+		
+		//í¼ì„¼íŠ¸ ë‹¨ìœ„ ë°”ê¿”ì£¼ëŠ” ë³€ìˆ˜
+		double e = (a / d) * 100.0;
+		//ê°•ì œ í˜•ë³€í™˜
+		sb.insert(0, String.format("ë„ì„œê´€ë‚´ ['%d%'] ì±…ì´ ëŒ€ì¶œì¤‘ ì…ë‹ˆë‹¤.%n", (int) e));
+		return sb.toString();
+
+	}
+	/*
+	@Param  
+	word : Bookì˜ getter ì¢…ë¥˜ ì„ íƒí•  ë•Œ
+	key : ê°’ ë¹„êµí•  ë•Œ
+	ê²€ìƒ‰ì–´ì™€ ì¼ì¹˜í•˜ëŠ” ìœ ì €ë¥¼ ì¶œë ¥í•˜ê²Œ ë§Œë“œëŠ” ë©”ì†Œë“œ
+	 */	
+	public String serachForUsers(String word, String key) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(String.format("[%s]ì— í•´ë‹¹í•˜ëŠ” íšŒì›ì…ë‹ˆë‹¤.%n", key));
+		sb.append(String.format("--------------------------------------------%%n"));
+		sb.append(String.format("íšŒì›ë²ˆí˜¸  ì•„ì´ë””   ì´ë¦„   ì „í™”ë²ˆí˜¸ %n"));
+		sb.append(String.format("--------------------------------------------%%n"));
+
+			User s = this.users.get(key);
+
+			// User toString ìˆ˜ì •í•´ì•¼í•¨
+			if (word.equals("íšŒì›ë²ˆí˜¸") && s.getUserNo().contains(key)) {
+				sb.append(String.format("%s%n", s.toString()));
+			} else if (word.equals("ì´ë¦„") && s.getName().contains(key)) {
+				sb.append(String.format("%s%n", s.toString()));
+			} else if (word.equals("ì•„ì´ë””") && s.getUserId().contains(key)) {
+				sb.append(String.format("%s%n", s.toString()));
+			} else if (word.equals("ì „í™”ë²ˆí˜¸") && s.getphone().contains(key)) {
+				sb.append(String.format("%s%n", s.toString()));
+			}
+
+		sb.append(String.format("------------------------------------------%n"));
+		return sb.toString();
+	}
+
+	/*
+	@Param
+	ìœ ì € ìƒì„¸ë³´ê¸°.
+	*/
+		public String viewUserInDetail(String userNo) {
+		StringBuilder sb = new StringBuilder();
+		// countìš© ì„ì‹œë³€ìˆ˜, íšŒì°¨
+		int count = 0;
+		// ê°’ ì…ë ¥ë°›ëŠ” ë³€ìˆ˜
+		
+		sb.append(String.format("[íšŒì›ë²ˆí˜¸/ì´ë¦„/ì•„ì´ë””/ì´ë©”ì¼/ì—°ë½ì²˜]%n"));
+		sb.append(String.format("%s%n", this.users.get(userNo)));
+		sb.append(String.format("ì˜¤ëŠ˜ ë‚ ì§œ : %s%n", this.nowDate));
+		sb.append(String.format("--------------------------------------------%%n"));
+		sb.append(String.format("íšŒì°¨  ë„ì„œëª…    ëŒ€ì¶œì¼   ë°˜ë‚©ì¼   ë°˜ë‚©ì˜ˆì •ì¼    ì—°ì²´ì¼ìˆ˜%n"));
+		sb.append(String.format("--------------------------------------------%%n"));
+
+			for (CheckOut checkout : checkOuts) {
+				++count;
+				Book book = this.books.get(checkout.getBookNo());
+				sb.append(String.format("%-5d%-10s%-10s%-10s%-10s%-5s%n", count, book.getBookTitle(),
+						checkout.getCheckOutDate(), checkout.getReturnDate(), checkout.getDueDate(),
+						checkout.getOverdueDays()));
+			}
+		return sb.toString();
+	}
+
+		// ì „ì²´ ë©”ì„¸ì§€ ë³´ê¸°
+		public String viewAllMessages() {
+			StringBuilder sb = new StringBuilder();
+
+			if(this.currentUser.getMessages().size() == 0 ) {
+				System.out.println("ë©”ì‹œì§€ê°€ ì—†ìŠµë‹ˆë‹¤.");
+			}else {
+				sb.append(String.format("[%s/%s]ë‹˜ì—ê²Œ ì˜¨ ë©”ì„¸ì§€ê°€ [%d]ê°œ ìˆìŠµë‹ˆë‹¤.%n", currentUser.getUserNo(), currentUser.getName(),
+						this.currentUser.getMessages().size()));
+				sb.append(this.currentUser.getMessages());
+			}
+			return sb.toString();
+
+		}
+
+		// deleteOneMessage (ë©”ì‹œì§€ í•œê°œì”© ì‚­ì œí•˜ëŠ” ë©”ì†Œë“œ)
+		public void deleteOneMessage(int messageNumber) {
+			// ê°€ì ¸ì™€ì•¼ í•  ê²ƒ : ë©”ì„¸ì§€ì˜ ë²ˆí˜¸(messageNumber)
+			this.currentUser.getMessages().remove(messageNumber);
+		}
+
+		// ë©”ì„¸ì§€ ì „ì²´ ì‚­ì œ
+		public void deleteAllMessages() {
+			this.currentUser.getMessages().clear();
+		}
+
+		// ì˜¤ëŠ˜ ë‚ ì§œ êµ¬í•˜ëŠ” ë©”ì†Œë“œ
+		public String getToday() {
+			String today = this.now.format(DateTimeFormatter.ISO_LOCAL_DATE).toString();
+			return today;
+		}
+		
+		public String getDueday() {
+			String dueday = this.now.plusDays(7).format(DateTimeFormatter.ISO_LOCAL_DATE).toString();
+			return dueday;
+		}
+		
+		public String viewBookInDetail(String bookNo) {
+			StringBuilder sb = new StringBuilder();
+
+			Book book = this.books.get(bookNo);
+
+			sb.append(String.format("[%s/ %s/ %s/ &s]%n", book.getBookNo(), book.getBookTitle(), book.getPublisher(),
+					book.getAuthor()));
+			sb.append(String.format("ì˜¤ëŠ˜ ë‚ ì§œ : %s", this.getToday()));
+			sb.append(String.format(
+					"------------------------------------------------------------------------------------------------"));
+			sb.append(String.format("íšŒì°¨         ëŒ€ì¶œì¼            ë°˜ë‚©ì¼             ë°˜ë‚©ì˜ˆì •ì¼       ì—°ì²´ì¼ìˆ˜   ëŒ€ì¶œì¸    íšŒì›ë²ˆí˜¸"));
+			sb.append(String.format(
+					"------------------------------------------------------------------------------------------------"));
+
+			// ëª¨ë“  ì²´í¬ì•„ì›ƒ ê°ì²´ë“¤ ì¤‘ì—
+			// ì§€ê¸ˆ ë‚´ê°€ ë³´ë ¤ëŠ” ì±…ë„˜ë²„ë‘ ë˜‘ê°™ì€ ì±…ë„˜ë²„ë¥¼ ê°€ì§€ê³  ìˆëŠ” ê°ì²´
+			int count = 0;
+			for (CheckOut checkOut : checkOuts) {
+				if (checkOut.getBookNo().equals(book.getBookNo())) {
+					String key = checkOut.getUserNo();
+					++count;
+					sb.append(String.format("%d %s %s %s %d %s %s %n", count, checkOut.getCheckOutDate(), checkOut.getReturnDate(), checkOut.getDueDate(),
+							checkOut.getOverdueDays(), checkOut.getUserNo(), this.users.get(key).getName()));
+				}
+			}
+			return sb.toString();
+		}
 }
