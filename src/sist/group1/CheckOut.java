@@ -2,7 +2,7 @@ package sist.group1;
 
 import java.io.Serializable;
 
-public class CheckOut implements Serializable {
+public class CheckOut implements Serializable, Comparable<CheckOut> {
 	
 	/**
 	 * Á÷·ÄÈ­ UID
@@ -38,6 +38,10 @@ public class CheckOut implements Serializable {
 	public void setCheckOutDate(String checkOutDate) {
 		this.checkOutDate = checkOutDate;
 	}
+	
+	public void setReturnDate(String returnDate) {
+		this.returnDate = returnDate;
+	}
 
 	public String getReturnDate() {
 		return returnDate;
@@ -68,12 +72,13 @@ public class CheckOut implements Serializable {
 		this.overdueDays = overdueDays;
 	}	
 	
-	/*public int getcheckOutbookStatus() {
-	return checkOutbookStatus;
-	}*/
-	
-	/*public void setccheckOutbookStatus(int checkOutbookStatus) {
-	this.checkOutbookStatus = checkOutbookStatus;
-	}*/
+	@Override
+	public int compareTo(CheckOut obj) {
+		CheckOut checkOut = null;
+		if (obj instanceof CheckOut) {
+			checkOut = (CheckOut) obj;
+		}
+		return this.checkOutDate.compareTo(checkOut.getCheckOutDate());
+	}
 	
 }

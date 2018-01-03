@@ -44,19 +44,24 @@ public class LibraryService {
 		}
 	}
 	public void userMenu(Scanner sc) {
-		System.out.println("["+utils.getCurrentUser().getName()+"]"+"님으로 로그인 했습니다.");
 		/*관리자에게 온 메세지가 [1]개 있습니다. (메세지 메소드 호출)*/
 		/*[1] 연체중인 도서가 있습니다. 반납 해주세요. (연체 메소드 호출)*/
+		System.out.println("["+utils.getCurrentUser().getName()+"]"+"님으로 로그인 했습니다.");
+		System.out.println(this.dao.viewAllMessages());
 		while(true) {
 			System.out.println("1.도서 검색   2.대출 목록   3.반납 목록   4.메시지 확인   0.로그아웃");
 			System.out.print("선택>");
 			int input = sc.nextInt();
 			if(input == 0)break;
 			switch(input) {
-			case 1: /*도서 검색 sub메뉴 */break;
-			case 2: /*대출 목록 sub메뉴*/break;
-			case 3: /*반납 목록 sub메뉴*/break;
-			case 4: /*메세지 확인 sub메뉴*/this.viewAllMessages(sc);break;
+			/*도서 검색 sub메뉴 */
+			case 1: break;
+			/*대출 목록 sub메뉴*/
+			case 2: break;
+			/*반납 목록 sub메뉴*/
+			case 3: break;
+			/*메세지 확인 sub메뉴*/
+			case 4: this.viewAllMessages(sc);break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
 			}
 		}
