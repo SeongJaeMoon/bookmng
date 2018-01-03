@@ -4,6 +4,7 @@ import java.util.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.Period;
 
 public class LibraryDAO {
 
@@ -62,7 +63,7 @@ public class LibraryDAO {
 		/*
 		 * 값 출력 테스트
 		 */
-		StringBuilder sb = new StringBuilder();
+		/*StringBuilder sb = new StringBuilder();
 		Set<String>keySet = this.users.keySet();
 		List<String>temp = new ArrayList<String>(keySet);
 		Iterator<String>it = temp.iterator();
@@ -70,7 +71,9 @@ public class LibraryDAO {
 			String key = it.next();
 			sb.append(String.format("%s%n",this.users.get(key)));
 		}
-		System.out.println(sb.toString());
+		System.out.println(sb.toString());*/
+		this.users = TestClass.testUser;
+		this.books = TestClass.testBook;
 	}
 
 	/*
@@ -80,6 +83,7 @@ public class LibraryDAO {
 	 * -잘못된 전화번호 형식입니다. 다시 입력해주세요.
 	 */
 
+	//사용자 등록
 	public void register(String userId, String password, String name, String phone) {
 		User user = null;
 		String userNo = "U001";
@@ -103,6 +107,26 @@ public class LibraryDAO {
 		this.users.put(userNo, u);
 	}
 
+	//도서 등록
+	public String registerBook(String bookTitle, String author, String publisher) {
+		Book book = null;
+		String bookNo = "B001";
+		if(this.books.size()>0) {
+			Set<String>key = this.books.keySet();
+			List<String>temp = new ArrayList<String>(key);
+			Collections.sort(temp, new Comparator<String>() {
+				@Override
+				public int compare(String s1, String s2) {
+					return s1.compareTo(s2);
+				}
+			});
+			String tempKey = temp.get(temp.size() - 1);
+			book = this.books.get(tempKey);
+			bookNo = String.format("B%03d", Integer.parseInt(book.getBookNo().substring(1)) + 1);
+		}
+		this.books.put(bookNo, new Book(bookNo, bookTitle, author, publisher));
+		return bookNo;
+	}
 	/*
 	 * @Param 사용자 아이디, 사용자 비밀번호
 	 * 범용적으로 사용 가능한 메소드. (현재 사용자 설정용, 사용자 존재 여부)  
@@ -209,44 +233,77 @@ public class LibraryDAO {
 			}
 		}
 	}
+	
+	//도서 삭제
+	public String deleteBook(String bookNo) {
+		StringBuilder sb = new StringBuilder();
+		Book b = this.books.get(bookNo);
+		sb.append(String.format("[%s/%s]가 삭제되었습니다.%n", b.getBookNo(), b.getBookTitle()));	
+		this.books.remove(bookNo);
+		return sb.toString();
+	}
+	
 	/*@Param  
 	word : Book의 getter 종류 선택할 때
 	key : 값 비교할 때
 	검색어와 일치하는 도서를 출력하게 만드는 메소드
 	*/
 	public String searchForBooks(String word, String key) {
+			StringBuilder sb = new StringBuilder();
+			
+			// 검색어에 해당하는 도서 안내 메세지
+			sb.append(String.format("[%s]에 해당하는 도서목록 입니다.%n", key));
+			sb.append(String.format("--------------------------------------------%n"));
+			sb.append(String.format("등록번호   도서명     저자    출판사    대출현황%n"));
+			sb.append(String.format("--------------------------------------------%n"));
 
-		StringBuilder sb = new StringBuilder();
-		
-		//검색어에 해당하는 도서 안내 메세지
-		sb.append(String.format("[%s]에 해당하는 도서목록 입니다.%n", key));
-		sb.append(String.format("--------------------------------------------%%n"));
-		sb.append(String.format("등록번호   도서명     저자    출판사    대출현황%n"));
-		sb.append(String.format("--------------------------------------------%%n"));
-		
-			Book s = this.books.get(key);
-			if (word.equals("등록번호") && s.getBookNo().contains(key)) {
+			Set<String> set = this.books.keySet();
+			List<String> list = new ArrayList<String>(set);
+
+			if (word.equals("등록번호")) {
+				Book s = this.books.get(key);
 				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
 						s.getAuthor(), s.getBookStatus()));
-			} else if (word.equals("책제목") && s.getBookTitle().contains(key)) {
-				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
-						s.getAuthor(), s.getBookStatus()));
-			} else if (word.equals("출판사") && s.getAuthor().contains(key)) {
-				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
-						s.getAuthor(), s.getBookStatus()));
-			} else if (word.equals("저자") && s.getPublisher().contains(key)) {
-				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
-						s.getAuthor(), s.getBookStatus()));
+				
+			} else if (word.equals("도서명")) {
+				for (String i : list) {
+					if (this.books.get(i).getBookTitle().contains(key)) {
+						sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", this.books.get(i).getBookNo(),
+								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
+								this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
+					}
+				}
+
+			} else if (word.equals("출판사")) {
+				for (String i : list) {
+					if (this.books.get(i).getPublisher().contains(key)) {
+						sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", this.books.get(i).getBookNo(),
+								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
+								this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
+					}
+				}
 			}
-		
-		sb.append(String.format("------------------------------------------%n"));
-		return sb.toString();
+			
+			else if (word.equals("저자")) {
+				for (String i : list) {
+					if (this.books.get(i).getAuthor().contains(key)) {
+						sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", this.books.get(i).getBookNo(),
+								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
+								this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
+					}
+				}
+			} 
+
+			sb.append(String.format("------------------------------------------%n"));
+			return sb.toString();
 	}
 	
-	public String viewCheckedOutBooks() {
-
+		//대출중 도서 확인
+		public String viewCheckedOutBooks() {
+			
 		StringBuilder sb = new StringBuilder();
 		//임시 카운트 변수
+		if(this.checkOuts.size()!=0) {
 		int a = 0;
 		// 퍼센트 계산용 books 사이즈 변수
 		double d = this.books.size();
@@ -266,48 +323,73 @@ public class LibraryDAO {
 							s.getName(), c.getUserNo()));
 				}
 			}
-		
+			
 		//퍼센트 단위 바꿔주는 변수
 		double e = (a / d) * 100.0;
 		//강제 형변환
 		sb.insert(0, String.format("도서관내 ['%d%'] 책이 대출중 입니다.%n", (int) e));
+		}else {
+			sb.append("대출 중인 책이 없습니다.");
+		}
 		return sb.toString();
 
 	}
-	/*
-	@Param  
+	
+	/*	
+		@Param  
 	word : Book의 getter 종류 선택할 때
 	key : 값 비교할 때
 	검색어와 일치하는 유저를 출력하게 만드는 메소드
 	 */	
-	public String serachForUsers(String word, String key) {
+		public String serachForUsers(String word, String key) {
 
-		StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 
-		sb.append(String.format("[%s]에 해당하는 회원입니다.%n", key));
-		sb.append(String.format("--------------------------------------------%%n"));
-		sb.append(String.format("회원번호  아이디   이름   전화번호 %n"));
-		sb.append(String.format("--------------------------------------------%%n"));
+			sb.append(String.format("[%s]에 해당하는 회원입니다.%n", key));
+			sb.append(String.format("--------------------------------------------%n"));
+			sb.append(String.format("회원번호  아이디   이름   전화번호 %n"));
+			sb.append(String.format("--------------------------------------------%n"));
 
-			User s = this.users.get(key);
+			Set<String> set = this.users.keySet();
+			List<String> list = new ArrayList<String>(set);
+
+			// 중복 값 출력을 위한 정렬 메소드
+			Collections.sort(list, new Comparator<String>() {
+				@Override
+				public int compare(String a1, String b1) {
+					return a1.compareTo(b1);
+				}
+			});
 
 			// User toString 수정해야함
-			if (word.equals("회원번호") && s.getUserNo().contains(key)) {
-				sb.append(String.format("%s%n", s.toString()));
-			} else if (word.equals("이름") && s.getName().contains(key)) {
-				sb.append(String.format("%s%n", s.toString()));
-			} else if (word.equals("아이디") && s.getUserId().contains(key)) {
-				sb.append(String.format("%s%n", s.toString()));
-			} else if (word.equals("전화번호") && s.getphone().contains(key)) {
-				sb.append(String.format("%s%n", s.toString()));
+			if (word.equals("회원번호")) {
+				sb.append(String.format("%s%n", this.users.get(key).toString()));
+			} else if (word.equals("이름")) {
+				for (String i : list) {
+					if (this.users.get(i).getName().contains(key)) {
+						sb.append(String.format("%s%n", this.users.get(i).toString()));
+					}
+				}
+			} else if (word.equals("아이디")) {
+				for(String i : list) {
+					if(this.users.get(i).getUserId().contains(key)) {
+						sb.append(String.format("%s%n", this.users.get(i).toString()));
+					}
+				}
+			} else if (word.equals("전화번호")) {
+				for (String i : list) {
+				if (this.users.get(i).getphone().contains(key)) {
+					sb.append(String.format("%s%n", this.users.get(i).toString()));
+					}
+				}
 			}
 
-		sb.append(String.format("------------------------------------------%n"));
-		return sb.toString();
+			sb.append(String.format("------------------------------------------%n"));
+			return sb.toString();
 	}
 
 	/*
-	@Param
+		@Param
 	유저 상세보기.
 	*/
 		public String viewUserInDetail(String userNo) {
@@ -319,9 +401,9 @@ public class LibraryDAO {
 		sb.append(String.format("[회원번호/이름/아이디/이메일/연락처]%n"));
 		sb.append(String.format("%s%n", this.users.get(userNo)));
 		sb.append(String.format("오늘 날짜 : %s%n", this.nowDate));
-		sb.append(String.format("--------------------------------------------%%n"));
+		sb.append(String.format("--------------------------------------------%n"));
 		sb.append(String.format("회차  도서명    대출일   반납일   반납예정일    연체일수%n"));
-		sb.append(String.format("--------------------------------------------%%n"));
+		sb.append(String.format("--------------------------------------------%n"));
 
 			for (CheckOut checkout : checkOuts) {
 				++count;
@@ -373,12 +455,15 @@ public class LibraryDAO {
 			String today = this.now.format(DateTimeFormatter.ISO_LOCAL_DATE).toString();
 			return today;
 		}
+		
+		
 		// 오늘 날짜로부터 +7일을 구하느 메소드
 		public String getDueday() {
 			String dueday = this.now.plusDays(7).format(DateTimeFormatter.ISO_LOCAL_DATE).toString();
 			return dueday;
 		}
 		
+		//도서 상세보기
 		public String viewBookInDetail(String bookNo) {
 			StringBuilder sb = new StringBuilder();
 
@@ -408,7 +493,6 @@ public class LibraryDAO {
 		}
 		
 		// checkOutBook 사용자가 도서를 대출 한다.
-
 		public void checkOutBook(String bookNo) {
 			// 매개변수로 받은 대출할 도서의 번호, 현재 로그인한 사용자번호, 오늘 날짜로 체크아웃 객체를 만든다.
 			CheckOut checkOut = new CheckOut(bookNo, utils.getCurrentUser().getUserNo(), this.getToday());
@@ -421,8 +505,8 @@ public class LibraryDAO {
 			// status를 1(대출중)으로 변경한다.
 			book.setBookStatus(1);
 		}
+		
 		// viewCheckedOutBooks 사용자가 대출중인 도서 목록을 본다.
-
 		public void viewUserCheckedOutBooks() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(
@@ -452,12 +536,54 @@ public class LibraryDAO {
 			System.out.println(sb.toString());
 		}
 
-	 
+		//도서 목록 검색시 도서 존재여부 확인 없다면, null 값 리턴
+		private Book getBook(String value) {
+			Book book = null;
+			Set<String>key = this.books.keySet();
+			List<String>temp = new ArrayList<String>(key);
+			Iterator<String> it = temp.iterator();
+			while(it.hasNext()) {
+				String keyTemp = (String)it.next();
+				Book b = this.books.get(keyTemp);
+				if(b.getBookNo().equals(value)||
+						b.getBookTitle().equals(value)||
+						b.getPublisher().equals(value)||
+						b.getAuthor().equals(value)){
+					book = b;
+					break;
+				}
+			}
+			return book;
+		}
+		
+		//해당 도서의 상태를 확인
+		public int getBookStatus(String bookNo) {
+			int result = 0;
+			Set<String>key = this.books.keySet();
+			List<String>temp = new ArrayList<String>(key);
+			Iterator<String> it = temp.iterator();
+			while(it.hasNext()) {
+				String keyTemp = (String)it.next();
+				Book b = this.books.get(keyTemp);
+				if(b.getBookNo().equals(bookNo)) {
+					result = 1;
+				}
+				if(b.getBookNo().equals(bookNo)&&(b.getBookStatus()==1||b.getBookStatus()==2)) {
+					result = 2;
+				}
+			}
+			return result;
+		}
+		
+		//책이 존재하는지 확인
+		private void isExistBook(String value) throws BookException{
+			if(this.getBook(value)==null) {
+				throw new BookException("등록되지 않은 책 입니다. 다시 입력해주세요.");
+			}
+		}
 
 		// returnBook 사용자가 도서를 반납 한다.
-
 		// 도서번호를 매개 변수로 받고, 해당하는 책의 bookStatus를 0으로 바꾸고 checkOUt데이터의 반납일을 오늘로 만들어주면 됨.
-
 		public void returnBook(String bookNo) {
 			// 모든 체크아웃 데이터중에
 			for (CheckOut checkOut : this.checkOuts) {
@@ -478,11 +604,8 @@ public class LibraryDAO {
 			}
 		}
 
-	 
-
 		// viewReturnedBooks 사용자가 반납한 도서 목록을 본다.
-
-		public void viewReturnedBooks() {
+		public String viewReturnedBooks() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("[%s/%s]님의 반납 목록  입니다.%n", this.utils.getCurrentUser().getUserNo(), this.utils.getCurrentUser().getName()));
 			sb.append(String.format("오늘 날짜 : %s%n", this.getToday()));
@@ -508,19 +631,201 @@ public class LibraryDAO {
 							checkOut.getCheckOutDate(), checkOut.getReturnDate(), checkOut.getOverdueDays()));
 				}
 			}
-			System.out.println(sb.toString());
+			return sb.toString();
+		}
+		
+		//반납 예정일 수정
+		public String changeDueDate(String bookNo, String dueDate) {
+			 
+			StringBuilder sb = new StringBuilder();
+			boolean temp = books.containsKey(bookNo);
+			if(temp == false) {
+				sb.append("잘못된 형식입니다.");
+			}		
+			for (CheckOut d : checkOuts) {
+				if (bookNo == d.getBookNo() && d.getReturnDate() == null) {
+					d.setDueDate(dueDate);
+					sb.append("반납 예정일 변경이 완료되었습니다.");
+				}
+			}
+			return sb.toString();
+		}
+		
+		// 전체 도서 출력
+		public String viewAllBooks() {
+
+			//0: 비치중, 1: 대출중, 2:연체중 을 수정하기
+			this.changeBookStatus();
+			
+			StringBuilder sb = new StringBuilder();
+			Set<String> key = this.books.keySet();
+
+			// BOOK의 KEY값을 저장하기 위한 임시변수 LIST b
+			List<String> b = new ArrayList<String>(key);
+
+			Collections.sort(b, new Comparator<String>() {
+				@Override
+				public int compare(String b1, String b2) {
+					return b1.compareTo(b2);
+				}
+			});
+
+			for (String i : b) {
+				sb.append(String.format("%-20s%-40s%-60s%-80s%-100s%n", this.books.get(i).getBookNo(),
+						this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(), this.books.get(i).getAuthor()
+						,this.books.get(i).getBookStatusString()
+						));
+				
+
+			}
+			return sb.toString();
+
+		}
+		
+		//0: 비치중, 1: 대출중, 2:연체중
+		//연체 값(0: 비치중, 1: 대출중, 2:연체중) 변경 메소드
+		//전체 변경 값으로 수정요
+		//this.changeBookStatus(this.books.get(i).getBookStatus())));
+		public String changeBookStatus(int BookStatus) {
+
+			String temp = null;
+			switch (BookStatus) {
+			case 0:temp = "비치 중";break;
+			case 1:temp = "대출 중";break;
+			case 2:temp = "연체 중";break;
+			}
+			return temp;
 		}
 
-	 
-
-//연체일수 구하기 메소드 반납예정일이 오늘 이전일때
-/*	public boolean getOverDueDays() {
-		String dueDate;
-
-		for (CheckOut checkOut : checkOuts) {
-			dueDate = checkOut.getDueDate();
+		//전체 북상태값 변경
+		public void changeBookStatus() {
+			String temp = null;
+			Set<String> set = books.keySet();
+			List<String> list = new ArrayList<String>(set);
+			
+			for(String i : list) {
+		
+			switch (this.books.get(i).getBookStatus()) {
+			case 0:temp = "비치 중";break;
+			case 1:temp = "대출 중";break;
+			case 2:temp = "연체 중";break;
+			   }
+			this.books.get(i).setBookStatusString(temp);
+			}
+		
 		}
-		LocalDate dueDate = LocalDate.of();
-		return false;
-	}*/
+		
+		// 전체 사용자 출력
+		public String viewAllUsers() {
+
+			StringBuilder sb = new StringBuilder();
+			Set<String> key = this.users.keySet();
+
+			// USER의 KEY값을 저장하기 위한 임시변수 LIST b
+			List<String> b = new ArrayList<String>(key);
+
+			Collections.sort(b, new Comparator<String>() {
+				@Override
+				public int compare(String b1, String b2) {
+					return b1.compareTo(b2);
+				}
+			});
+
+			for (String i : b) {
+
+				sb.append(String.format("%-10s%-10s%-10s%-10s%n", this.users.get(i).getUserNo(),
+						this.users.get(i).getUserId(), this.users.get(i).getName(), this.users.get(i).getphone()));
+			}
+			return sb.toString();
+		}
+
+		// 연체 도서 전체 보기
+		public String viewOverdueBooks() {
+			// 연체일 계산 메소드 호출
+			this.setAllOverdueDays();
+			// BookNO와 UserNo를 저장하기 위한 임시변수
+			String temp = null;
+			String temp1 = null;
+			StringBuilder sb = new StringBuilder();
+			Set<String> key = this.books.keySet();
+			List<String> b = new ArrayList<String>(key);
+			Collections.sort(b, new Comparator<String>() {
+				@Override
+				public int compare(String b1, String b2) {
+					return b1.compareTo(b2);
+				}
+			});
+			
+			for (String c : b) {
+				if (this.books.get(c).getBookStatus() == 2) {
+					sb.append(this.books.get(c).getBookNo());
+					sb.append(this.books.get(c).getBookTitle());
+					sb.append(this.books.get(c).getAuthor());
+					sb.append(this.books.get(c).getPublisher());
+					temp = this.books.get(c).getBookNo();
+				}
+				for (CheckOut d : checkOuts) {
+
+					if (temp == d.getBookNo() && d.getReturnDate() == null) {
+						sb.append(d.getCheckOutDate());
+						sb.append(d.getDueDate());
+						sb.append(d.getOverdueDays());
+						temp1 = d.getUserNo();
+					}
+				}
+				if (temp1 == null)
+					continue;
+				sb.append(this.users.get(temp1).getName());
+				sb.append(this.users.get(temp1).getUserNo());
+				temp = null;
+				temp1 = null;
+			}
+			if(sb.length()==0||sb == null) {
+				sb.append("연체 중인 도서 목록이 없습니다.");
+			}
+			return sb.toString();
+		}
+			
+		// 연체일수 계산 메소드
+		public void setAllOverdueDays() {
+			int a = 0;
+			LocalDate nowDate = LocalDate.now();
+			for (CheckOut c : this.checkOuts) {
+				if (c.getReturnDate() == null && nowDate.isAfter(LocalDate.parse(c.getDueDate()))) {
+					Period period = Period.between(nowDate, LocalDate.parse(c.getDueDate()));
+					a = period.getDays();
+					c.setOverdueDays(a);
+
+				}
+			}
+		}
+
+		// 관리자 - 메세지를 보낸다.
+		public void sendMessages(String message) {
+
+			// DAO 클래스 private List<CheckOut> checkOuts = new ArrayList<CheckOut>(); // 전체
+			// 대출 리스트
+			// DAO 클래스 private Map<String, User> users = new HashMap<String, User>(); // 전체
+			// 회원 리스트
+			// User클래스 private List<String> messages = new ArrayList<String>();
+
+			Set<String> temp2 = new HashSet<String>();
+			Set<String> set = books.keySet();
+			Iterator<String> it = set.iterator();
+			while (it.hasNext()) {
+				String temp = it.next();
+				if (this.books.get(temp).getBookStatus() == 2) {
+					temp2.add(temp);
+
+				}
+				for (String i : temp2) {
+					for (CheckOut e : checkOuts) {
+						if (i == e.getBookNo()) {
+							users.get(e.getUserNo()).setMessages(message);
+						}
+					}
+				}
+			}
+		}
+				
 }
