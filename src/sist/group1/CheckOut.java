@@ -73,11 +73,7 @@ public class CheckOut implements Serializable, Comparable<CheckOut> {
 	}	
 	
 	@Override
-	public int compareTo(CheckOut obj) {
-		CheckOut checkOut = null;
-		if (obj instanceof CheckOut) {
-			checkOut = (CheckOut) obj;
-		}
+	public int compareTo(CheckOut checkOut) {
 		return this.checkOutDate.compareTo(checkOut.getCheckOutDate());
 	}
 	

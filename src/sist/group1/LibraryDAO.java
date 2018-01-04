@@ -592,17 +592,19 @@ public class LibraryDAO {
 			StringBuilder sb = new StringBuilder();
 			// 모든 체크아웃 데이터중에
 			for (CheckOut checkOut : this.checkOuts) {
-				// 체크아웃이 가지고 있는 도서 번호가 매개변수로 받은 반납하고 싶은 책 넘버와 같을 때
-				if (checkOut.getBookNo().equals(bookNo)) {
+				// 체크아웃이 가지고 있는 도서 번호가 매개변수로 받은 반납하고 싶은 책 넘버와 같을 때&&
+				// 체크아웃이 가지고 있는 유저 번호가 현재 사용자의 번호와 같다면 
+				if (checkOut.getBookNo().equals(bookNo) 
+						&& checkOut.getUserNo().equals(utils.getCurrentUser().getUserNo())) {
 					// 매개변수로 받은 반납하고 싶은 책을 book 변수에 담고
 					Book book = books.get(bookNo);
 					// 그 책의 상태가 0(비치중)이 아니라면
 					if (book.getBookStatus() != 0) {
-
 						// 책의 상태를 0(비치중)으로 변경하고
 						book.setBookStatus(0);
-						// 해당 체크아웃 객체의 반납일을 오늘로 설정한다.
+						// 해당 체크아웃 객체의 반납일을 오늘로 설정하고, 반납 예정일을 ""로 변경
 						checkOut.setReturnDate(getToday());
+						checkOut.setDueDate("");
 						sb.append(String.format("[%s/%s]이 반납되었습니다.",book.getBookNo(), book.getBookTitle()));
 					}
 				}
@@ -681,18 +683,11 @@ public class LibraryDAO {
 					return b1.compareTo(b2);
 				}
 			});
-			String temp = null;
+			
 			for (String i : b) {
-				if(this.books.get(i).getBookStatus()==0) {
-					temp = "비치 중";
-				}else if(this.books.get(i).getBookStatus()==1) {
-					temp = "대출 중";
-				}else {
-					temp = "연체 중";
-				}
 				sb.append(String.format("%s %2s %2s %2s %2s %n", this.books.get(i).getBookNo(),
 						this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(), this.books.get(i).getAuthor()
-						, temp//this.books.get(i).getBookStatusString()
+						, this.books.get(i).getBookStatusString()
 						));
 				
 

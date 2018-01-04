@@ -378,7 +378,7 @@ public class LibraryService {
 	}
 
 	//대출중인 도서 목록
-	public void viewCheckedOutBooks(Scanner sc) {
+	private void viewCheckedOutBooks(Scanner sc) {
 		System.out.println(this.dao.viewUserCheckedOutBooks());
 		System.out.println("1.반납하기   0.나가기");
 		System.out.print("선택>");
@@ -386,10 +386,11 @@ public class LibraryService {
 		sc.nextLine();
 		switch(input) {
 		case 0: break;
-		case 1: this.returnBook(sc); 
+		case 1: this.returnBook(sc); break;
 		}
 	}
-	public void returnBook(Scanner sc) {
+	//도서 반납
+	private void returnBook(Scanner sc) {
 		System.out.println("반납할 도서를 선택해주세요.");
 		System.out.println("등록번호 입력>");
 		String bookNo = sc.next();
@@ -397,7 +398,7 @@ public class LibraryService {
 	}
 
 	//사용자 전체 메세지
-	public void viewAllMessages(Scanner sc) {
+	private void viewAllMessages(Scanner sc) {
 		if(this.utils.getCurrentUser().getMessages().size()==0 
 				||this.utils.getCurrentUser().getMessages()==null) {
 			System.out.println("삭제할 메시지가 없습니다.");
@@ -421,7 +422,7 @@ public class LibraryService {
 	}
 	
 	//사용자 전체 메세지를 삭제
-	public void viewDeleteOneMessage(Scanner sc) {
+	private void viewDeleteOneMessage(Scanner sc) {
 		System.out.println("삭제할 메세지 번호를 입력해주세요.");
 		System.out.print("번호입력>");
 		int input = sc.nextInt();
@@ -430,7 +431,7 @@ public class LibraryService {
 	}
 	
 	//전체 회원을 검색
-	public void serachForUsers(Scanner sc) {
+	private void serachForUsers(Scanner sc) {
 		boolean run = true;
 		while (run) {
 			System.out.println("회원검색");
@@ -469,7 +470,7 @@ public class LibraryService {
 	}
 	
 	//회원 상세 보기
-	public void viewUserInDetail(Scanner sc) {
+	private void viewUserInDetail(Scanner sc) {
 		boolean run = true;
 		while (run) {
 			System.out.println("1.회원 상세 보기  0.나가기");
@@ -503,7 +504,7 @@ public class LibraryService {
 	}
 	
 	//반납 예정일 수정
-	public void checkedOutBooks(Scanner sc) {
+	private void checkedOutBooks(Scanner sc) {
 		
 		boolean run = true;
 		boolean run1 = true;

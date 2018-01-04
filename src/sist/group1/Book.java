@@ -84,12 +84,7 @@ public class Book implements Serializable, Comparable<Book>{
 	}
 	
 	@Override
-	public int compareTo(Book o) {
-		int result = 0;
-		if(o instanceof Book) {
-			Book book = (Book)o;
-			result = this.bookNo.compareTo(book.getBookNo());
-		}
-		return result;
+	public int compareTo(Book book) {
+		return this.bookNo.compareTo(book.getBookNo());
 	}
 }

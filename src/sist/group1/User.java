@@ -84,12 +84,7 @@ public class User implements Serializable, Comparable<User> {
 	}
 
 	@Override
-	public int compareTo(User o) {
-		int result = 0;
-		if(o instanceof User) {
-			User user = (User)o;
-			result = this.userId.compareTo(user.getUserId());
-		}
-		return result;
+	public int compareTo(User user) {
+		return this.userId.compareTo(user.getUserId());
 	}
 }
