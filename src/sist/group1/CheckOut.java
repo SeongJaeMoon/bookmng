@@ -16,7 +16,7 @@ public class CheckOut implements Serializable, Comparable<CheckOut> {
 	private String userNo;
 	private String checkOutDate;
 	private String returnDate;
-	private String dueDate="";
+	private String dueDate;
 	//private int checkOutbookStatus; //0: 반납완료, 1: 대출중, 2: 연체중
 	private int overdueDays;
 

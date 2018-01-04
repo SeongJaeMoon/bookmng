@@ -38,6 +38,7 @@ public class LibraryService {
 		while(true){
 			System.out.println("1.도서 관리 2.회원 관리 0.로그 아웃");
 			int input = sc.nextInt();
+			sc.nextLine();
 			if(input == 0) break;
 			switch(input) {
 			/*도서 관리 메뉴 메소드 호출*/
@@ -213,12 +214,13 @@ public class LibraryService {
 	private void overdueSub(Scanner sc) {
 		System.out.println("1.메세지 전송   0.나가기");
 		int input = sc.nextInt();
+		sc.nextLine();
 		if(input == 0) {
 			return;
 		}else if(input == 1) {
 			System.out.println("연체중인 회원들에게 메세지를 전송합니다.");
 			System.out.print("메세지 입력>");
-			String message = sc.next();
+			String message = sc.nextLine();
 			this.dao.sendMessages(message);
 			System.out.println("메세지가 전송 되었습니다.");
 		}
@@ -427,7 +429,7 @@ public class LibraryService {
 		System.out.print("번호입력>");
 		int input = sc.nextInt();
 		this.dao.deleteOneMessage(input);
-		System.out.printf(String.format("[%d번]메세지가 삭제되었습니다.", input));
+		System.out.printf(String.format("%n[%d번]메세지가 삭제되었습니다.%n", input));
 	}
 	
 	//전체 회원을 검색
@@ -507,46 +509,46 @@ public class LibraryService {
 	private void checkedOutBooks(Scanner sc) {
 		
 		boolean run = true;
-		boolean run1 = true;
-	
+
 		while (run) {
 			System.out.println("1.반납 예정일 수정  0.나가기");
 			System.out.print("선택>");
 			int selectNo = sc.nextInt();
 			sc.nextLine();	
+			if(selectNo==0) {
+				run = false;
+				break;
+			}
 			//수정할 책 번호 및 수정할 날짜 매개변수
 			System.out.print("등록번호>");		
 			String bookNo = sc.next();
 			System.out.print("반납예정일 입력(YYYY-MM-DD)>");
 			String dueDate = sc.next();
 			//반납예정일 형식 예외처리 위한 반복문
-			while(run1) {
-			try{
-				this.dueDateExceptionCheck(dueDate);
+			//while(run1) {
+			//try{
+				if(this.dueDateExceptionCheck(dueDate)) {
+					System.out.println("올바른 형식을 입력하세요.");
+				}else {
+				System.out.println(this.dao.changeDueDate(bookNo, dueDate));
 				break;
-			  }catch(Exception e) {
-				  System.out.println(e.getMessage());
-				  System.out.print("반납예정일 입력(YYYY-MM-DD)>");
-				  dueDate = sc.next();
-			  }
-			}
-			
-			switch (selectNo) {
-			//수정할 책 번호 및 수정할 날짜 매개변수
-			    case 1:System.out.println(this.dao.changeDueDate(bookNo, dueDate));break;
-				case 0:	run = false;break;
-			}
-		}
-		
-		
-		
+				}
+			  //}catch(Exception e) {
+				 // System.out.println(e.getMessage());
+				 // System.out.print("반납예정일 입력(YYYY-MM-DD)>");
+				 // dueDate = sc.next();
+			  //}
+			//}
+		}		
 	}
 
-	private void dueDateExceptionCheck(String dueDate) throws RegDateException {
-	        try {
-	            LocalDate date = LocalDate.parse(dueDate, DateTimeFormatter.ISO_LOCAL_DATE);
+	private boolean dueDateExceptionCheck(String dueDate){
+	        boolean isOK = false;
+			try {
+	            LocalDate.parse(dueDate, DateTimeFormatter.ISO_LOCAL_DATE);
 	        } catch (DateTimeParseException e) {
-	        	throw new RegDateException("올바른 형식으로 입력하세요.");
+	        	isOK = true;
 	        }
+			return isOK;
 	    }
 }
