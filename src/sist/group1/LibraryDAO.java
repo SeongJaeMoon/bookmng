@@ -250,7 +250,7 @@ public class LibraryDAO {
 	*/
 	public String searchForBooks(String word, String key) {
 			StringBuilder sb = new StringBuilder();
-			
+			this.changeBookStatus();
 			// 검색어에 해당하는 도서 안내 메세지
 			sb.append(String.format("[%s]에 해당하는 도서목록 입니다.%n", key));
 			sb.append(String.format("--------------------------------------------%n"));
@@ -262,24 +262,24 @@ public class LibraryDAO {
 
 			if (word.equals("등록번호")) {
 				Book s = this.books.get(key);
-				sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
-						s.getAuthor(), s.getBookStatus()));
+				sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
+						s.getAuthor(), s.getBookStatusString()));
 				
 			} else if (word.equals("도서명")) {
 				for (String i : list) {
 					if (this.books.get(i).getBookTitle().contains(key)) {
-						sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", this.books.get(i).getBookNo(),
+						sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", this.books.get(i).getBookNo(),
 								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
-								this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
+								this.books.get(i).getAuthor(), this.books.get(i).getBookStatusString()));
 					}
 				}
 
 			} else if (word.equals("출판사")) {
 				for (String i : list) {
 					if (this.books.get(i).getPublisher().contains(key)) {
-						sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", this.books.get(i).getBookNo(),
+						sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", this.books.get(i).getBookNo(),
 								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
-								this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
+								this.books.get(i).getAuthor(), this.books.get(i).getBookStatusString()));
 					}
 				}
 			}
@@ -287,9 +287,9 @@ public class LibraryDAO {
 			else if (word.equals("저자")) {
 				for (String i : list) {
 					if (this.books.get(i).getAuthor().contains(key)) {
-						sb.append(String.format("%-5s%-7s%-7s%-7s%-7d%n", this.books.get(i).getBookNo(),
+						sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", this.books.get(i).getBookNo(),
 								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
-								this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
+								this.books.get(i).getAuthor(), this.books.get(i).getBookStatusString()));
 					}
 				}
 			} 
@@ -493,7 +493,8 @@ public class LibraryDAO {
 		}
 		
 		// checkOutBook 사용자가 도서를 대출 한다.
-		public void checkOutBook(String bookNo) {
+		public String checkOutBook(String bookNo) {
+			StringBuilder sb = new StringBuilder();
 			// 매개변수로 받은 대출할 도서의 번호, 현재 로그인한 사용자번호, 오늘 날짜로 체크아웃 객체를 만든다.
 			CheckOut checkOut = new CheckOut(bookNo, utils.getCurrentUser().getUserNo(), this.getToday());
 			// 해당 체크아웃 객체의 반납예정일을 7일 이후로 설정한다.
@@ -504,10 +505,13 @@ public class LibraryDAO {
 			Book book = books.get(bookNo);
 			// status를 1(대출중)으로 변경한다.
 			book.setBookStatus(1);
+			sb.append(String.format("[%s/%s]의 대출이 완료되었습니다.", book.getBookNo(),book.getBookTitle()));
+			return sb.toString();
 		}
 		
 		// viewCheckedOutBooks 사용자가 대출중인 도서 목록을 본다.
-		public void viewUserCheckedOutBooks() {
+		public String viewUserCheckedOutBooks() {
+			this.changeBookStatus();
 			StringBuilder sb = new StringBuilder();
 			sb.append(
 					String.format("[%s/%s]님의 현재 대출 목록  입니다.%n", this.utils.getCurrentUser().getUserNo(), this.utils.getCurrentUser().getName()));
@@ -526,14 +530,14 @@ public class LibraryDAO {
 					// 해당 북이 대출중이라면
 					if (book.getBookStatus() == 1) {
 						// StringBuilder에 내용을 붙여준다.
-						sb.append(String.format("%-10s %20s %s %15s %10d %10d%n", book.getBookNo(), book.getBookTitle(),
-								checkOut.getCheckOutDate(), checkOut.getDueDate(), book.getBookStatus(),
+						sb.append(String.format("%s %s %s %5s %10s %10d%n", book.getBookNo(), book.getBookTitle(),
+								checkOut.getCheckOutDate(), checkOut.getDueDate(), book.getBookStatusString(),
 								checkOut.getOverdueDays()));
 					}
 				}
 
 			}
-			System.out.println(sb.toString());
+			return sb.toString();
 		}
 
 		//도서 목록 검색시 도서 존재여부 확인 없다면, null 값 리턴
@@ -576,15 +580,16 @@ public class LibraryDAO {
 		}
 		
 		//책이 존재하는지 확인
-		private void isExistBook(String value) throws BookException{
+		/*private void isExistBook(String value) throws BookException{
 			if(this.getBook(value)==null) {
 				throw new BookException("등록되지 않은 책 입니다. 다시 입력해주세요.");
 			}
-		}
+		}*/
 
 		// returnBook 사용자가 도서를 반납 한다.
 		// 도서번호를 매개 변수로 받고, 해당하는 책의 bookStatus를 0으로 바꾸고 checkOUt데이터의 반납일을 오늘로 만들어주면 됨.
-		public void returnBook(String bookNo) {
+		public String returnBook(String bookNo) {
+			StringBuilder sb = new StringBuilder();
 			// 모든 체크아웃 데이터중에
 			for (CheckOut checkOut : this.checkOuts) {
 				// 체크아웃이 가지고 있는 도서 번호가 매개변수로 받은 반납하고 싶은 책 넘버와 같을 때
@@ -598,10 +603,11 @@ public class LibraryDAO {
 						book.setBookStatus(0);
 						// 해당 체크아웃 객체의 반납일을 오늘로 설정한다.
 						checkOut.setReturnDate(getToday());
+						sb.append(String.format("[%s/%s]이 반납되었습니다.",book.getBookNo(), book.getBookTitle()));
 					}
 				}
-
 			}
+			return sb.toString();
 		}
 
 		// viewReturnedBooks 사용자가 반납한 도서 목록을 본다.
@@ -621,7 +627,8 @@ public class LibraryDAO {
 			// 체크아웃 리스트에 담긴 모든 체크아웃 객체들 중에
 			for (CheckOut checkOut : this.checkOuts) {
 				// 체크아웃 객체가 가진 회원번호와 현재 사용자의 유저번호가 같고, 체크아웃 객체의 반납일이 Null이 아닐때
-				if ((checkOut.getUserNo().equals(this.utils.getCurrentUser().getUserNo())) && (checkOut.getReturnDate() != null)) {
+				if ((checkOut.getUserNo().equals(this.utils.getCurrentUser().getUserNo())) 
+						&& (checkOut.getReturnDate() != null)) {
 					// 조건문을 만족하는 범위에서 count 증가
 					count++;
 					// 체크아웃에 객체의 필드인 bookNo를 이용해서 해당 도서를 book 변수에 담고
@@ -653,11 +660,16 @@ public class LibraryDAO {
 		
 		// 전체 도서 출력
 		public String viewAllBooks() {
-
+			System.out.println("전체 도서 목록 입니다.");
 			//0: 비치중, 1: 대출중, 2:연체중 을 수정하기
 			this.changeBookStatus();
 			
 			StringBuilder sb = new StringBuilder();
+			
+			sb.append(String.format("--------------------------------------------%n"));
+			sb.append(String.format("등록번호   도서명     저자    출판사    대출현황%n"));
+			sb.append(String.format("--------------------------------------------%n"));
+			
 			Set<String> key = this.books.keySet();
 
 			// BOOK의 KEY값을 저장하기 위한 임시변수 LIST b
@@ -669,11 +681,18 @@ public class LibraryDAO {
 					return b1.compareTo(b2);
 				}
 			});
-
+			String temp = null;
 			for (String i : b) {
-				sb.append(String.format("%-20s%-40s%-60s%-80s%-100s%n", this.books.get(i).getBookNo(),
+				if(this.books.get(i).getBookStatus()==0) {
+					temp = "비치 중";
+				}else if(this.books.get(i).getBookStatus()==1) {
+					temp = "대출 중";
+				}else {
+					temp = "연체 중";
+				}
+				sb.append(String.format("%s %2s %2s %2s %2s %n", this.books.get(i).getBookNo(),
 						this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(), this.books.get(i).getAuthor()
-						,this.books.get(i).getBookStatusString()
+						, temp//this.books.get(i).getBookStatusString()
 						));
 				
 
@@ -684,7 +703,7 @@ public class LibraryDAO {
 		
 		//0: 비치중, 1: 대출중, 2:연체중
 		//연체 값(0: 비치중, 1: 대출중, 2:연체중) 변경 메소드
-		//전체 변경 값으로 수정요
+		//전체 변경 값으로 수정
 		//this.changeBookStatus(this.books.get(i).getBookStatus())));
 		public String changeBookStatus(int BookStatus) {
 
@@ -717,10 +736,14 @@ public class LibraryDAO {
 		
 		// 전체 사용자 출력
 		public String viewAllUsers() {
-
+			System.out.println("전체 회원 목록 입니다.");
 			StringBuilder sb = new StringBuilder();
+			sb.append(String.format("--------------------------------------------%n"));
+			sb.append(String.format("회원번호   아이디     이름         전화번호 %n"));
+			sb.append(String.format("--------------------------------------------%n"));
+			
 			Set<String> key = this.users.keySet();
-
+			
 			// USER의 KEY값을 저장하기 위한 임시변수 LIST b
 			List<String> b = new ArrayList<String>(key);
 
@@ -816,16 +839,34 @@ public class LibraryDAO {
 				String temp = it.next();
 				if (this.books.get(temp).getBookStatus() == 2) {
 					temp2.add(temp);
-
 				}
 				for (String i : temp2) {
-					for (CheckOut e : checkOuts) {
+					for (CheckOut e : this.checkOuts) {
 						if (i == e.getBookNo()) {
-							users.get(e.getUserNo()).setMessages(message);
+							this.users.get(e.getUserNo()).setMessages(message);
 						}
 					}
 				}
 			}
 		}
-				
+		
+		//현재 사용자의 대출 가능한지 구하기(가능<3)
+		public int isCheckOutAble() {
+			int result = 0;
+			for(CheckOut c : this.checkOuts) {
+				if(c.getReturnDate()==""
+						&& c.getUserNo().equals(utils.getCurrentUser().getUserNo())) {
+					++result;
+				}
+			}
+			return result;
+		}
+		//현재 책이 비치중인지 구하기
+		public boolean isCheckOutAble2(String bookNo) {
+			boolean result = false;
+			if(this.books.get(bookNo).getBookStatus()==0) {
+				result = true;
+			}
+			return result;
+		}
 }

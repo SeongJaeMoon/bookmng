@@ -102,10 +102,11 @@ public class LibraryService {
 		}
 	}
 	
+	/*사용자 초기 메뉴*/
 	public void userMenu(Scanner sc) {
 		/*관리자에게 온 메세지가 [1]개 있습니다. (메세지 메소드 호출)*/
 		/*[1] 연체중인 도서가 있습니다. 반납 해주세요. (연체 메소드 호출)*/
-		System.out.println("["+utils.getCurrentUser().getName()+"]"+"님으로 로그인 했습니다.");
+		System.out.printf("[%s]님으로 로그인 했습니다.%n", utils.getCurrentUser().getName());
 		System.out.println(this.dao.viewAllMessages());
 		while(true) {
 			System.out.println("1.도서 검색   2.대출 목록   3.반납 목록   4.메시지 확인   0.로그아웃");
@@ -114,14 +115,11 @@ public class LibraryService {
 			if(input == 0)break;
 			switch(input) {
 			/*도서 검색 sub메뉴 */
-			case 1: this.searchForBooks(sc);break;
+			case 1: this.searchForBooksSub(sc);break;
 			/*대출 목록 sub메뉴*/
 			case 2: this.viewCheckedOutBooks(sc);break;
-			
 			/*반납 목록 sub메뉴*/
-			case 3: 
-				System.out.println(this.dao.viewReturnedBooks());
-				break;
+			case 3: System.out.println(this.dao.viewReturnedBooks());break;
 			/*메세지 확인 sub메뉴*/
 			case 4: this.viewAllMessages(sc);break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
@@ -168,7 +166,7 @@ public class LibraryService {
 			System.out.println("회원 가입이 완료 되었습니다.");
 		}
 	}
-	
+	//도서 등록
 	private void registerBook(Scanner sc) {
 		System.out.println("등록할 도서를 입력해주세요.");
 		System.out.print("도서명>");
@@ -187,6 +185,7 @@ public class LibraryService {
 		this.dao.logout();
 	}
 	
+	/*회원 가입시 예외처리*/
 	public void isPhonePattern(String password) throws PatternException{
 		String temp = "(\\d{3}).*(\\d{3}).*(\\d{4})";
 		Boolean bool = Pattern.matches(temp, password);
@@ -210,6 +209,7 @@ public class LibraryService {
 		}
 	}
 	
+	//연체 중인 도서를 가진 사용자에게 메세지 보내기 서브 메뉴
 	private void overdueSub(Scanner sc) {
 		System.out.println("1.메세지 전송   0.나가기");
 		int input = sc.nextInt();
@@ -225,10 +225,10 @@ public class LibraryService {
 		
 	}
 	
-	//도서를 검색
+	//도서를 검색(관리자 전용)
 	private void searchForBooks(Scanner sc) {
-		boolean run = true;
 		
+		boolean run = true;
 		while (run) {
 			System.out.println("도서검색");
 			System.out.println("1.등록번호 검색   2.도서명 검색   3.출판사 검색   4.저자 검색   0.나가기");
@@ -237,33 +237,98 @@ public class LibraryService {
 			int selectNum = sc.nextInt();
 			sc.nextLine();
 			System.out.println("검색할 도서를 입력해주세요");
-			String key = null;
-			
 			switch (selectNum) {
 			case 1:
-				System.out.print("등록번호>");
+				this.searchForBooks("등록번호", sc);
+				/*System.out.print("등록번호>");
 				key = sc.next();
-				System.out.println(this.dao.searchForBooks("등록번호", key));
+				System.out.println(this.dao.searchForBooks("등록번호", key));*/
 				break;
 			case 2:
-				System.out.print("도서명>");
-				key = sc.next();
-				System.out.println(this.dao.searchForBooks("도서명", key));
+				this.searchForBooks("도서명", sc);
 				break;
 			case 3:
-				System.out.print("출판사>");
-				key = sc.next();
-				System.out.println(this.dao.searchForBooks("출판사", key));
+				this.searchForBooks("출판사", sc);
 				break;
 			case 4:
-				System.out.println("저자>");
-				key = sc.next();
-				System.out.println(this.dao.searchForBooks("저자", key));
+				this.searchForBooks("저자", sc);
 				break;
 			case 0:run = false;break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");	
 			}
 		}
+	}
+	
+	//도서를 대출 (사용자 전용)
+	private void checkOutBook(Scanner sc) {
+		System.out.println("대출할 책의 등록번호을 입력해 주세요.");
+		System.out.print("등록번호 입력>");
+		String bookNo = sc.next();
+		try {
+			this.isExistBook(bookNo);
+			if(this.dao.isCheckOutAble() >= 3) {
+				System.out.println("3권 이상의 책은 대출 할 수 없습니다.");
+			}else if(!this.dao.isCheckOutAble2(bookNo)) {
+				System.out.println("현재 비치중인 책만 대출 가능합니다.");
+			}else {
+				System.out.println(this.dao.checkOutBook(bookNo));
+			}
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	//도서 대출 서브 메뉴
+	private void checkOutBookSub(Scanner sc) {
+		System.out.println("1.대출 하기   0.나가기");
+		System.out.print("선택>");
+		int input = sc.nextInt();
+		sc.nextLine();
+		switch(input) {
+		case 0: break;
+		case 1: this.checkOutBook(sc);
+		}
+	}
+	
+	//도서를 검색(사용자 전용)
+	private void searchForBooksSub(Scanner sc) {
+		 while (true) {
+	         System.out.println("1.전체 도서 목록  2.등록번호  3.제목 검색  4.저자 검색   5.출판사 검색   0.나가기");
+	         System.out.print("선택>");
+	         int selectNo = sc.nextInt();
+	         if (selectNo == 0)break;
+	         switch (selectNo) {
+	         case 1:
+	            System.out.println(this.dao.viewAllBooks());
+	            this.checkOutBookSub(sc);
+	            break;
+	         case 2:
+	            this.searchForBooks("등록번호", sc);
+	            this.checkOutBookSub(sc);
+	            break;
+	         case 3:
+	            this.searchForBooks("도서명", sc);
+	            this.checkOutBookSub(sc);
+	            break;
+	         case 4:
+	            this.searchForBooks("저자", sc);
+	            this.checkOutBookSub(sc);
+	            break;
+	         case 5:
+	            this.searchForBooks("출판사", sc);
+	            this.checkOutBookSub(sc);
+	            break;
+	         }
+	      }
+	}
+	
+	//도서 검색 메소드 서브
+	private void searchForBooks(String key, Scanner sc) {
+		System.out.println("검색할 도서를 입력해주세요.");
+		System.out.printf("%s입력>", key);
+		String value = sc.next();
+		// 검색 진행
+		// -> 매개변수 목록에 key, value를 같이 보낸다.
+		System.out.println(this.dao.searchForBooks(key, value));
 	}
 	
 	//도서를 삭제
@@ -314,7 +379,21 @@ public class LibraryService {
 
 	//대출중인 도서 목록
 	public void viewCheckedOutBooks(Scanner sc) {
-		System.out.println(this.dao.viewCheckedOutBooks());
+		System.out.println(this.dao.viewUserCheckedOutBooks());
+		System.out.println("1.반납하기   0.나가기");
+		System.out.print("선택>");
+		int input = sc.nextInt();
+		sc.nextLine();
+		switch(input) {
+		case 0: break;
+		case 1: this.returnBook(sc); 
+		}
+	}
+	public void returnBook(Scanner sc) {
+		System.out.println("반납할 도서를 선택해주세요.");
+		System.out.println("등록번호 입력>");
+		String bookNo = sc.next();
+		System.out.println(this.dao.returnBook(bookNo));	
 	}
 
 	//사용자 전체 메세지
@@ -413,16 +492,17 @@ public class LibraryService {
 		System.out.println(this.dao.viewUserInDetail(userNo));
 	}
 	
-	//도서 삭제 전 예외 처리
+    //도서 상태에 따른 삭제 및 대출시 예외 처리
 	private void isExistBook(String bookNo) throws BookException{
 		if(this.dao.getBookStatus(bookNo)==0) {
-			throw new BookException("잘못된 등록번호  입니다. 다시 입력해주세요.");
+			throw new BookException("잘못된 등록번호 입니다. 다시 입력해주세요.");
 		}
 		if(this.dao.getBookStatus(bookNo)==2) {
-			throw new BookException("대출중/연체중 도서는 삭제할 수 없습니다.");
+			throw new BookException("대출중/연체중 도서는 선택할 수 없습니다.");
 		}
 	}
 	
+	//반납 예정일 수정
 	public void checkedOutBooks(Scanner sc) {
 		
 		boolean run = true;
