@@ -262,13 +262,13 @@ public class LibraryDAO {
 
 			if (word.equals("등록번호")) {
 				Book s = this.books.get(key);
-				sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
+				sb.append(String.format("%s %s %s% s% s%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
 						s.getAuthor(), s.getBookStatusString()));
 				
 			} else if (word.equals("도서명")) {
 				for (String i : list) {
 					if (this.books.get(i).getBookTitle().contains(key)) {
-						sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", this.books.get(i).getBookNo(),
+						sb.append(String.format("%s %s% s% s% s%n", this.books.get(i).getBookNo(),
 								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
 								this.books.get(i).getAuthor(), this.books.get(i).getBookStatusString()));
 					}
@@ -277,7 +277,7 @@ public class LibraryDAO {
 			} else if (word.equals("출판사")) {
 				for (String i : list) {
 					if (this.books.get(i).getPublisher().contains(key)) {
-						sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", this.books.get(i).getBookNo(),
+						sb.append(String.format("%s %s% s% s% s%n", this.books.get(i).getBookNo(),
 								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
 								this.books.get(i).getAuthor(), this.books.get(i).getBookStatusString()));
 					}
@@ -287,7 +287,7 @@ public class LibraryDAO {
 			else if (word.equals("저자")) {
 				for (String i : list) {
 					if (this.books.get(i).getAuthor().contains(key)) {
-						sb.append(String.format("%-5s%-7s%-7s%-7s%-7s%n", this.books.get(i).getBookNo(),
+						sb.append(String.format("%s %s %s %s %s %n", this.books.get(i).getBookNo(),
 								this.books.get(i).getBookTitle(), this.books.get(i).getPublisher(),
 								this.books.get(i).getAuthor(), this.books.get(i).getBookStatusString()));
 					}
@@ -320,7 +320,7 @@ public class LibraryDAO {
 					
 					User s = this.users.get(c.getUserNo());
 					++a;
-					sb.append(String.format("%-5s%-10s%-10s%-10s%-10s%-10s%-10s%-10s%n", b.getBookNo(),
+					sb.append(String.format("%-5s%-10s%-15s%-15s%-15s%-15s%-10s%-10s%n", b.getBookNo(),
 							b.getBookTitle(), b.getAuthor(), b.getPublisher(), c.getCheckOutDate(), c.getDueDate(),
 							s.getName(), c.getUserNo()));
 				}
@@ -792,7 +792,7 @@ public class LibraryDAO {
 				}
 			}
 		}
-			if(a < 0) {
+			if(a <= 0) {
 			sb.append("연체 중인 도서 목록이 없습니다.");
 			}else {
 				double e = (a / per) * 100.0;

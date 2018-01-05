@@ -1,5 +1,7 @@
 package sist.group1;
 
+
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.time.LocalDate;
@@ -11,7 +13,7 @@ public class LibraryService {
 	private LibraryDAO dao = new LibraryDAO();
 	private Utils utils = Utils.getInstance();
 	
-	public void login(Scanner sc) {
+	public void login(Scanner sc)  {
 		System.out.println("로그인을 진행합니다.");
 		System.out.print("아이디>");
 		String userId = sc.next();
@@ -34,10 +36,12 @@ public class LibraryService {
 		}
 	}
 	/*관리자 메뉴*/
-	public void adminMenu(Scanner sc) {
+	public void adminMenu(Scanner sc)  {
+
+		int input = 0;
 		while(true){
 			System.out.println("1.도서 관리 2.회원 관리 0.로그 아웃");
-			int input = sc.nextInt();
+			input = sc.nextInt();
 			sc.nextLine();
 			if(input == 0) break;
 			switch(input) {
@@ -46,11 +50,12 @@ public class LibraryService {
 			/*회원 관리 메뉴 메소드 호출*/
 			case 2:this.adminMenuSub2(sc);break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
+				}
 			}
-		}
 	}
 	/*관리자 메뉴 서브1 도서관리*/
-	public void adminMenuSub1(Scanner sc) {
+	public void adminMenuSub1(Scanner sc)   {
+		try {
 			System.out.println("1.전체 도서   2.도서 검색   3.대출중 도서   4.연체중 도서   0.나가기");
 			int input = sc.nextInt();
 			switch(input) {
@@ -75,21 +80,24 @@ public class LibraryService {
 				break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
 			}
+		}catch(InputMismatchException e) {
+			 System.out.println("입력 값은 숫자로만 이루어져야 합니다.");
 		}
+	}
 	/*관리자 도서 검색*/
-	private void adminSearchSub(Scanner sc) {
-		System.out.println(this.dao.viewAllBooks());
-		System.out.println("1.도서 등록   2.도서 삭제   0.나가기");
-		int input = sc.nextInt();
-		switch(input) {
-		case 0: break;
-		case 1: this.registerBook(sc);break;
-		case 2: this.deleteBook(sc);break;
-		}
+	private void adminSearchSub(Scanner sc)   {
+			System.out.println(this.dao.viewAllBooks());
+			System.out.println("1.도서 등록   2.도서 삭제   0.나가기");
+			int input = sc.nextInt();
+			switch (input) {
+			case 0:break;
+			case 1:this.registerBook(sc);break;
+			case 2:this.deleteBook(sc);break;
+			}
 	}
 	
 	/*관리자 메뉴 서브2 회원관리*/
-	public void adminMenuSub2(Scanner sc) {
+	public void adminMenuSub2(Scanner sc)   {
 		System.out.println("1.전체 회원   2.회원 검색");
 		int input = sc.nextInt();
 		sc.nextLine();
@@ -104,7 +112,7 @@ public class LibraryService {
 	}
 	
 	/*사용자 초기 메뉴*/
-	public void userMenu(Scanner sc) {
+	public void userMenu(Scanner sc){
 		/*관리자에게 온 메세지가 [1]개 있습니다. (메세지 메소드 호출)*/
 		/*[1] 연체중인 도서가 있습니다. 반납 해주세요. (연체 메소드 호출)*/
 		System.out.printf("[%s]님으로 로그인 했습니다.%n", utils.getCurrentUser().getName());
@@ -125,7 +133,7 @@ public class LibraryService {
 			case 4: this.viewAllMessages(sc);break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
 			}
-		}
+		 }
 	}
 	
 	//사용자 회원가입
@@ -224,18 +232,16 @@ public class LibraryService {
 			this.dao.sendMessages(message);
 			System.out.println("메세지가 전송 되었습니다.");
 		}
-		
 	}
 	
 	//도서를 검색(관리자 전용)
-	private void searchForBooks(Scanner sc) {
-		
+	private void searchForBooks(Scanner sc){
 		boolean run = true;
 		while (run) {
 			System.out.println("도서검색");
 			System.out.println("1.등록번호 검색   2.도서명 검색   3.출판사 검색   4.저자 검색   0.나가기");
 			System.out.print("선택>");
-
+			
 			int selectNum = sc.nextInt();
 			sc.nextLine();
 			System.out.println("검색할 도서를 입력해주세요");
@@ -258,7 +264,7 @@ public class LibraryService {
 			case 0:run = false;break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");	
 			}
-		}
+		 }
 	}
 	
 	//도서를 대출 (사용자 전용)
@@ -284,11 +290,12 @@ public class LibraryService {
 		System.out.println("1.대출 하기   0.나가기");
 		System.out.print("선택>");
 		int input = sc.nextInt();
+		
 		sc.nextLine();
 		switch(input) {
 		case 0: break;
 		case 1: this.checkOutBook(sc);
-		}
+		 }
 	}
 	
 	//도서를 검색(사용자 전용)
@@ -354,9 +361,9 @@ public class LibraryService {
 	}
 	
 	//도서 상세보기
-	public void viewBookInDetail(Scanner sc) {
+	public void viewBookInDetail(Scanner sc){
 		//while문 돌릴때 키값 받는 변수
-				//while문 돌릴떄 쓰는 변수
+		//while문 돌릴떄 쓰는 변수
 		boolean run = false;
 		while (run) {
 			System.out.println("1.도서 상세 보기  0.나가기");
@@ -367,7 +374,7 @@ public class LibraryService {
 				case 1:this.viewBookInDetailSub(sc);break;
 				case 0:	run = false;
 			}
-		}
+		 }
 	}
 	
 	//도서 상세보기 서브 메뉴
@@ -389,7 +396,7 @@ public class LibraryService {
 		switch(input) {
 		case 0: break;
 		case 1: this.returnBook(sc); break;
-		}
+		 }
 	}
 	//도서 반납
 	private void returnBook(Scanner sc) {
@@ -400,7 +407,7 @@ public class LibraryService {
 	}
 
 	//사용자 전체 메세지
-	private void viewAllMessages(Scanner sc) {
+	private void viewAllMessages(Scanner sc){
 		if(this.utils.getCurrentUser().getMessages().size()==0 
 				||this.utils.getCurrentUser().getMessages()==null) {
 			System.out.println("삭제할 메시지가 없습니다.");
@@ -420,11 +427,12 @@ public class LibraryService {
 				System.out.println("전체 메세지가 삭제되었습니다.");
 				break;
 			}
-		}
+		 }
 	}
 	
 	//사용자 전체 메세지를 삭제
 	private void viewDeleteOneMessage(Scanner sc) {
+		
 		System.out.println("삭제할 메세지 번호를 입력해주세요.");
 		System.out.print("번호입력>");
 		int input = sc.nextInt();
@@ -467,8 +475,8 @@ public class LibraryService {
 				System.out.println(this.dao.serachForUsers("전화번호", key));
 				break;
 			default : System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
+			 }
 			}
-		}
 	}
 	
 	//회원 상세 보기
@@ -484,7 +492,7 @@ public class LibraryService {
 			case 1:this.viewUserInDetailSub(sc);break;
 			case 0:run = false;break;
 			}
-		}
+		 }
 	}
 	
 	//회원 상세보기 서브 메뉴 
@@ -507,7 +515,7 @@ public class LibraryService {
 	
 	//반납 예정일 수정
 	private void checkedOutBooks(Scanner sc) {
-		
+	
 		boolean run = true;
 
 		while (run) {
@@ -525,22 +533,14 @@ public class LibraryService {
 			System.out.print("반납예정일 입력(YYYY-MM-DD)>");
 			String dueDate = sc.next();
 			//반납예정일 형식 예외처리 위한 반복문
-			//while(run1) {
-			//try{
 				if(this.dueDateExceptionCheck(dueDate)) {
 					System.out.println("올바른 형식을 입력하세요.");
 				}else {
 				System.out.println(this.dao.changeDueDate(bookNo, dueDate));
 				break;
 				}
-			  //}catch(Exception e) {
-				 // System.out.println(e.getMessage());
-				 // System.out.print("반납예정일 입력(YYYY-MM-DD)>");
-				 // dueDate = sc.next();
-			  //}
-			//}
-		}		
-	}
+			}
+		}
 
 	private boolean dueDateExceptionCheck(String dueDate){
 	        boolean isOK = false;
@@ -551,4 +551,6 @@ public class LibraryService {
 	        }
 			return isOK;
 	    }
+	
+	
 }
