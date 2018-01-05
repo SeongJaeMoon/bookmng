@@ -17,6 +17,8 @@ public class Book implements Serializable, Comparable<Book>{
 	private String author;
 	private String publisher;
 	private int bookStatus; //0: 비치중, 1: 대출중, 2:연체중
+	//bookStatus 상태값을 상태로 저장 위한 변수
+	private String bookStatusString;
 	
 	public Book() {
 		
@@ -54,6 +56,21 @@ public class Book implements Serializable, Comparable<Book>{
 		this.bookStatus = bookStatus;
 	}
 	
+	public void setBookStatusString(String bookStatusString) {
+		this.bookStatusString = bookStatusString;
+	}
+	
+	public String getBookStatusString() {
+		return bookStatusString;
+	}
+		
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%-10s%-20s%-20s%-10s%-10s%n",this.bookNo,this.bookTitle,this.author,this.publisher,this.bookStatus));
+		return sb.toString();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		boolean result = false;
@@ -67,12 +84,7 @@ public class Book implements Serializable, Comparable<Book>{
 	}
 	
 	@Override
-	public int compareTo(Book o) {
-		int result = 0;
-		if(o instanceof Book) {
-			Book book = (Book)o;
-			result = this.bookNo.compareTo(book.getBookNo());
-		}
-		return result;
+	public int compareTo(Book book) {
+		return this.bookNo.compareTo(book.getBookNo());
 	}
 }
