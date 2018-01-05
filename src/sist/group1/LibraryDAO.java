@@ -410,9 +410,9 @@ public class LibraryDAO {
 					checkout.setReturnDate("");
 				sb.append(String.format("%d/%s/%s/%s/%s/%s%n", count, book.getBookTitle(), checkout.getCheckOutDate(),
 						checkout.getReturnDate(), checkout.getDueDate(), checkout.getOverdueDays()));
-				sb.append(String.format("--------------------------------------------------%n"));
 			}
 		}
+		sb.append(String.format("--------------------------------------------------%n"));
 		return sb.toString();
 	}
 
@@ -436,8 +436,8 @@ public class LibraryDAO {
 				}
 
 				// sb.append(String.format("%n(%d개)연체중인 도서가 있습니다. 반납 해주세요.%n", checkoutNum));
-				sb.append("************************************************************");
 			}
+			sb.append("************************************************************");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -490,9 +490,9 @@ public class LibraryDAO {
 				sb.append(String.format("%d/%s/%s/%s/%d/%s/%s%n", count, checkOut.getCheckOutDate(),
 						checkOut.getReturnDate(), checkOut.getDueDate(), checkOut.getOverdueDays(),
 						checkOut.getUserNo(), this.users.get(key).getName()));
-				sb.append(String.format("--------------------------------------------------------------%n"));
 			}
 		}
+		sb.append(String.format("--------------------------------------------------------------%n"));
 		return sb.toString();
 	}
 
@@ -540,11 +540,11 @@ public class LibraryDAO {
 					sb.append(String.format("%s/%s/%s/%s/%s/%d%n", book.getBookNo(), book.getBookTitle(),
 							checkOut.getCheckOutDate(), checkOut.getDueDate(), book.getBookStatusString(),
 							checkOut.getOverdueDays()));
-					sb.append(String.format("---------------------------------------------------------%n"));
 				}
 			}
 
 		}
+		sb.append(String.format("---------------------------------------------------------%n"));
 		return sb.toString();
 	}
 
@@ -626,9 +626,9 @@ public class LibraryDAO {
 				// StringBuilder에 내용을 붙여준다.
 				sb.append(String.format("%d/%s/%s/%s/%s/%d%n", count, book.getBookNo(), book.getBookTitle(),
 						checkOut.getCheckOutDate(), checkOut.getReturnDate(), checkOut.getOverdueDays()));
-				sb.append(String.format("----------------------------------------------------%n"));
 			}
 		}
+		sb.append(String.format("----------------------------------------------------%n"));
 		return sb.toString();
 	}
 
@@ -779,7 +779,6 @@ public class LibraryDAO {
 
 		if (this.checkOuts.size() != 0) {
 
-
 			sb.append(String.format("오늘 날짜 : %s%n", this.nowDate));
 
 			sb.append(String.format("----------------------------------------------------------------------%n"));
@@ -805,8 +804,7 @@ public class LibraryDAO {
 			double e = (a / per) * 100.0;
 			sb.insert(0, String.format("%n도서관내[%d%%]책이 연체중 입니다.%n", (int) e));
 		}
-		sb.append(
-				String.format("----------------------------------------------------------------------%n"));
+		sb.append(String.format("----------------------------------------------------------------------%n"));
 		return sb.toString();
 	}
 

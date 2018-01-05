@@ -40,26 +40,34 @@ public class LibraryService {
 	public void adminMenu(Scanner sc) {
 
 		int input = 0;
+
 		while (true) {
-			System.out.println();
-			System.out.println("1.도서 관리   2.회원 관리   0.로그 아웃");
-			System.out.print("선택> ");
-			input = sc.nextInt();
-			sc.nextLine();
-			if (input == 0)
-				break;
-			switch (input) {
-			/* 도서 관리 메뉴 메소드 호출 */
-			case 1:
-				this.adminMenuSub1(sc);
-				;
-				break;
-			/* 회원 관리 메뉴 메소드 호출 */
-			case 2:
-				this.adminMenuSub2(sc);
-				break;
-			default:
-				System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
+
+			try {
+				System.out.println();
+				System.out.println("1.도서 관리   2.회원 관리   0.로그 아웃");
+				System.out.print("선택> ");
+				input = sc.nextInt();
+				sc.nextLine();
+				if (input == 0)
+					break;
+				switch (input) {
+				/* 도서 관리 메뉴 메소드 호출 */
+				case 1:
+					this.adminMenuSub1(sc);
+					;
+					break;
+				/* 회원 관리 메뉴 메소드 호출 */
+				case 2:
+					this.adminMenuSub2(sc);
+					break;
+				default:
+					System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
+				}
+
+			} catch (Exception e) {
+				System.out.println("잘못된 입력입니다. 다시 입력해 주세요.");
+				sc.nextLine();
 			}
 		}
 	}
@@ -157,33 +165,43 @@ public class LibraryService {
 		System.out.printf("[%s]님으로 로그인 했습니다.%n%n", utils.getCurrentUser().getName());
 		System.out.println(this.dao.viewAllMessages());
 		while (true) {
-			System.out.println();
-			System.out.println("1.도서 검색   2.대출 목록   3.반납 목록   4.메시지 확인   0.로그아웃");
-			System.out.print("선택> ");
-			int input = sc.nextInt();
-			if (input == 0)
-				break;
-			switch (input) {
-			/* 도서 검색 sub메뉴 */
-			case 1:
-				this.searchForBooksSub(sc);
-				break;
-			/* 대출 목록 sub메뉴 */
-			case 2:
-				this.viewCheckedOutBooks(sc);
-				break;
-			/* 반납 목록 sub메뉴 */
-			case 3:
-				System.out.println(this.dao.viewReturnedBooks());
-				break;
-			/* 메세지 확인 sub메뉴 */
-			case 4:
-				this.viewAllMessages(sc);
-				break;
-			default:
-				System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
+
+			try {
+				System.out.println();
+				System.out.println("1.도서 검색   2.대출 목록   3.반납 목록   4.메시지 확인   0.로그아웃");
+				System.out.print("선택> ");
+				int input = sc.nextInt();
+				if (input == 0)
+					break;
+				switch (input) {
+				/* 도서 검색 sub메뉴 */
+				case 1:
+					this.searchForBooksSub(sc);
+					break;
+				/* 대출 목록 sub메뉴 */
+				case 2:
+					this.viewCheckedOutBooks(sc);
+					break;
+				/* 반납 목록 sub메뉴 */
+				case 3:
+					System.out.println(this.dao.viewReturnedBooks());
+					break;
+				/* 메세지 확인 sub메뉴 */
+				case 4:
+					this.viewAllMessages(sc);
+					break;
+				default:
+					System.out.println("알 수 없는 입력입니다. 다시 입력해주세요.");
+				}
 			}
+
+			catch (Exception e) {
+				System.out.println("잘못된 입력입니다. 다시 입력해 주세요.");
+				sc.nextLine();
+			}
+
 		}
+
 	}
 
 	// 사용자 회원가입
