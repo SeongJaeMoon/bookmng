@@ -37,12 +37,9 @@ public class LibraryService {
 	}
 
 	/* 관리자 메뉴 */
-	public void adminMenu(Scanner sc) {
-
+	private void adminMenu(Scanner sc) {
 		int input = 0;
-
 		while (true) {
-
 			try {
 				System.out.println();
 				System.out.println("1.도서 관리   2.회원 관리   0.로그 아웃");
@@ -73,7 +70,7 @@ public class LibraryService {
 	}
 
 	/* 관리자 메뉴 서브1 도서관리 */
-	public void adminMenuSub1(Scanner sc) {
+	private void adminMenuSub1(Scanner sc) {
 		while (true) {
 			System.out.println();
 			System.out.println("1.전체 도서   2.도서 검색   3.대출중 도서   4.연체중 도서   0.나가기");
@@ -134,7 +131,7 @@ public class LibraryService {
 	}
 
 	/* 관리자 메뉴 서브2 회원관리 */
-	public void adminMenuSub2(Scanner sc) {
+	private void adminMenuSub2(Scanner sc) {
 		while (true) {
 			System.out.println();
 			System.out.println("1.전체 회원   2.회원 검색  0.나가기");
@@ -158,7 +155,7 @@ public class LibraryService {
 	}
 
 	/* 사용자 초기 메뉴 */
-	public void userMenu(Scanner sc) {
+	private void userMenu(Scanner sc) {
 		/* 관리자에게 온 메세지가 [1]개 있습니다. (메세지 메소드 호출) */
 		/* [1] 연체중인 도서가 있습니다. 반납 해주세요. (연체 메소드 호출) */
 		System.out.println();
@@ -237,7 +234,7 @@ public class LibraryService {
 				phone = sc.next();
 			}
 		}
-		if (this.dao.getCurrentUser(userId, password) != null) {
+		if (this.dao.getCurrentUser(userId, password) != null || userId.equals(utils.getAdmin())) {
 			System.out.println("이미 존재하는 id 입니다. 다시 입력해주세요.");
 		} else {
 			this.dao.register(userId, password, name, phone);
@@ -267,7 +264,7 @@ public class LibraryService {
 	}
 
 	/* 회원 가입시 예외처리 */
-	public void isPhonePattern(String password) throws PatternException {
+	private void isPhonePattern(String password) throws PatternException {
 		String temp = "(\\d{3}).*(\\d{3}).*(\\d{4})";
 		Boolean bool = Pattern.matches(temp, password);
 		if (!bool) {
@@ -275,7 +272,7 @@ public class LibraryService {
 		}
 	}
 
-	public void isPasswordPattern(String phone) throws PatternException {
+	private void isPasswordPattern(String phone) throws PatternException {
 		String temp = "(?=.*\\d)(?=.*[a-z]).{8,15}";
 		Boolean bool = Pattern.matches(temp, phone);
 		if (!bool) {
@@ -283,7 +280,7 @@ public class LibraryService {
 		}
 	}
 
-	public void isWrongUser(String userId, String password) throws ExistUserException {
+	private void isWrongUser(String userId, String password) throws ExistUserException {
 		if (this.dao.getCurrentUser(userId, password) == null && !userId.equals(utils.getAdmin())) {
 			throw new ExistUserException("등록되지 않은 사용자 입니다. 다시 입력해주세요.\n");
 		}
@@ -468,7 +465,7 @@ public class LibraryService {
 	}
 
 	// 도서 상세보기
-	public void viewBookInDetail(Scanner sc) {
+	private void viewBookInDetail(Scanner sc) {
 		// while문 돌릴때 키값 받는 변수
 		// while문 돌릴떄 쓰는 변수
 		boolean run = false;

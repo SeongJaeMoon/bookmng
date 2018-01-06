@@ -16,9 +16,7 @@ public class Book implements Serializable, Comparable<Book>{
 	private String bookTitle;
 	private String author;
 	private String publisher;
-	private int bookStatus; //0: 비치중, 1: 대출중, 2:연체중
-	//bookStatus 상태값을 상태로 저장 위한 변수
-	private String bookStatusString;
+	private String bookStatus; //비치중, 대출중, 연체중
 	
 	public Book() {
 		
@@ -30,6 +28,7 @@ public class Book implements Serializable, Comparable<Book>{
 		this.bookTitle = bookTitle;
 		this.author = author;
 		this.publisher = publisher;
+		setBookStatus("비치중");
 	}
 	
 	public String getPublisher() {
@@ -48,20 +47,12 @@ public class Book implements Serializable, Comparable<Book>{
 		return author;
 	}
 	
-	public int getBookStatus() {
+	public String getBookStatus() {
 		return bookStatus;
 	}
 
-	public void setBookStatus(int bookStatus) {
+	public void setBookStatus(String bookStatus) {
 		this.bookStatus = bookStatus;
-	}
-	
-	public void setBookStatusString(String bookStatusString) {
-		this.bookStatusString = bookStatusString;
-	}
-	
-	public String getBookStatusString() {
-		return bookStatusString;
 	}
 		
 	@Override
@@ -83,6 +74,10 @@ public class Book implements Serializable, Comparable<Book>{
 		return result;
 	}
 	
+	@Override
+	public int hashCode() {
+		return 31 * this.bookNo.hashCode();
+	}
 	@Override
 	public int compareTo(Book book) {
 		return this.bookNo.compareTo(book.getBookNo());
