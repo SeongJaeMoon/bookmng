@@ -82,7 +82,16 @@ public class User implements Serializable, Comparable<User> {
 		}
 		return result;
 	}
-
+	
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = 31 * result + this.userId.hashCode();
+		result = 31 * result + this.password.hashCode();
+		return result;
+	}
+	
 	@Override
 	public int compareTo(User user) {
 		return this.userId.compareTo(user.getUserId());
