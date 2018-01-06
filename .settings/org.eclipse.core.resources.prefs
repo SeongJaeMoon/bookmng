@@ -2,5 +2,7 @@ eclipse.preferences.version=1
 encoding//src/sist/group1/Book.java=EUC-KR
 encoding//src/sist/group1/CheckOut.java=EUC-KR
 encoding//src/sist/group1/Library.java=EUC-KR
+encoding//src/sist/group1/LibraryDAO.java=UTF-8
+encoding//src/sist/group1/LibraryService.java=UTF-8
 encoding//src/sist/group1/User.java=EUC-KR
 encoding//src/sist/group1/Utils.java=EUC-KR
