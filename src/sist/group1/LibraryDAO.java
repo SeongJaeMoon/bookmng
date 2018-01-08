@@ -286,11 +286,8 @@ public class LibraryDAO {
 	 * @Param word : Book의 getter 종류 선택할 때 key : 값 비교할 때 검색어와 일치하는 도서를 출력하게 만드는 메소드
 	 */
 	public String searchForBooks(String word, String key) {
-
 		StringBuilder sb = new StringBuilder();
-	
 		// 검색어에 해당하는 도서 안내 메세지
-
 		Set<String> set = this.books.keySet();
 		List<String> list = new ArrayList<String>(set);
 		sb.append("\n");
@@ -298,13 +295,10 @@ public class LibraryDAO {
 		sb.append(String.format("------------------------------------%n"));
 		sb.append(String.format("등록번호/도서명/저자/출판사/대출현황%n"));
 		sb.append(String.format("------------------------------------%n"));
-
 		if (word.equals("등록번호")) {
-
 			Book s = this.books.get(key);
 			sb.append(String.format("%s/%s/%s/%s/%s%n", s.getBookNo(), s.getBookTitle(), s.getPublisher(),
 					s.getAuthor(), s.getBookStatus()));
-
 		} else if (word.equals("도서명")) {
 			for (String i : list) {
 				if (this.books.get(i).getBookTitle().contains(key)) {
@@ -313,7 +307,6 @@ public class LibraryDAO {
 							this.books.get(i).getAuthor(), this.books.get(i).getBookStatus()));
 				}
 			}
-
 		} else if (word.equals("출판사")) {
 			for (String i : list) {
 				if (this.books.get(i).getPublisher().contains(key)) {
@@ -323,7 +316,6 @@ public class LibraryDAO {
 				}
 			}
 		}
-
 		else if (word.equals("저자")) {
 			for (String i : list) {
 				if (this.books.get(i).getAuthor().contains(key)) {
@@ -334,7 +326,6 @@ public class LibraryDAO {
 			}
 		}
 		sb.append(String.format("------------------------------------"));
-
 		return sb.toString();
 	}
 
@@ -688,7 +679,8 @@ public class LibraryDAO {
 			for (CheckOut d : this.checkOuts) {
 				if (bookNo.equals(d.getBookNo()) && (d.getReturnDate() == null || d.getReturnDate().equals(""))) {
 					d.setDueDate(dueDate);
-					this.books.get(bookNo).setBookStatus("연체중");
+					//this.books.get(bookNo).setBookStatus("연체중");
+					this.books.get(bookNo).setBookStatus(this.changeBookStatus(dueDate));
 					sb.append("반납 예정일 변경이 완료되었습니다.");
 				}
 			}
@@ -807,6 +799,8 @@ public class LibraryDAO {
 		return sb.toString();
 	}
 
+	
+	
 	// 연체일수 계산 메소드
 	public void setAllOverdueDays() {
 		int a = 0;
@@ -816,7 +810,7 @@ public class LibraryDAO {
 					&& nowDate.isAfter(LocalDate.parse(c.getDueDate()))) {
 				Period period = Period.between(nowDate, LocalDate.parse(c.getDueDate()));
 				a = period.getDays();
-				c.setOverdueDays(a);
+				c.setOverdueDays(Math.abs(a));
 
 			}
 		}
@@ -860,5 +854,19 @@ public class LibraryDAO {
 		}
 		//대출 가능 여부 결과값 반환
 		return result;
+	}
+
+	 //수정한 반납예정일 비교해서 대출중, 연체중 값 전달
+
+	public String changeBookStatus(String dueDate) {
+		String bookStatus = "";
+		LocalDate localDate = LocalDate.parse(dueDate, DateTimeFormatter.ISO_LOCAL_DATE);
+		LocalDate nowDate = LocalDate.now();
+		if (nowDate.isAfter(localDate)) {
+			bookStatus = "연체중";
+		} else {
+			bookStatus = "대출중";
+		}
+		return bookStatus;
 	}
 }
